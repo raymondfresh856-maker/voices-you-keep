@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voices You Keep™️ - Create Your Card</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-purple: #6B21A8;
+            --deep-purple: #4C1D95;
+            --accent-gold: #F59E0B;
+            --rose-gold: #FCA5A5;
+            --bg-dark: #0F0A1F;
+            --bg-card: #1A1330;
+            --text-light: #F3F4F6;
+            --text-gray: #9CA3AF;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1F1345 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(15, 10, 31, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(107, 33, 168, 0.2);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-gold), var(--rose-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-purple), var(--deep-purple));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(107, 33, 168, 0.4);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--accent-gold), #F97316);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Theme Grid */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .theme-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .theme-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(107, 33, 168, 0.4);
+        }
+
+        .theme-preview {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-info {
+            padding: 1.5rem;
+        }
+
+        .theme-info h3 {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .theme-info p {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+        }
+
+        /* Voice Recording Section */
+        .voice-studio {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .recording-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .record-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #EF4444, #DC2626);
+            border: 4px solid rgba(239, 68, 68, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .record-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+        }
+
+        .record-button.recording {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+            }
+        }
+
+        .waveform {
+            width: 100%;
+            height: 100px;
+            background: rgba(15, 10, 31, 0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 1rem;
+        }
+
+        .waveform-bar {
+            width: 4px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+            transition: height 0.1s;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-family: 'Courier New', monospace;
+            color: var(--accent-gold);
+        }
+
+        .upload-zone {
+            border: 2px dashed rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent-gold);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--accent-gold);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* Card Preview */
+        .card-preview-container {
+            perspective: 1000px;
+            margin: 3rem 0;
+        }
+
+        .card-preview {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .card-preview.flip {
+            transform: rotateY(180deg);
+        }
+
+        /* Payment Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-gray);
+        }
+
+        .close-modal:hover {
+            color: var(--accent-gold);
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(107, 33, 168, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, var(--accent-gold), #F97316);
+        }
+
+        .step.completed {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+
+        /* Tier Limits Warning */
+        .tier-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tier-warning i {
+            color: var(--accent-gold);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--accent-gold);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hide pages by default */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .theme-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo" onclick="navigate('themes')">Voices You Keep™️</div>
+        <ul class="nav-links">
+            <li><a href="#" onclick="navigate('themes')">Create Card</a></li>
+            <li><a href="#" onclick="navigate('dashboard')">Dashboard</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Theme Selection Page -->
+    <div id="themes-page" class="page active">
+        <div class="container">
+            <h1 style="text-align: center; margin-bottom: 1rem;">Choose Your Card Theme</h1>
+            <p style="text-align: center; color: var(--text-gray); margin-bottom: 2rem;">
+                Select a beautiful theme for your voice message card
+            </p>
+
+            <div id="tierInfo" class="tier-warning" style="display: none;">
+                <i class="fas fa-info-circle"></i>
+                <span id="tierText"></span>
+            </div>
+
+            <div class="theme-grid" id="themeGrid">
+                <!-- Themes will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Recording Page -->
+    <div id="voice-page" class="page">
+        <div class="container">
+            <div class="progress-steps">
+                <div class="step completed">1</div>
+                <div class="step active">2</div>
+                <div class="step">3</div>
+            </div>
+
+            <h1 style="text-align: center; margin-bottom: 2rem;">Add Your Voice</h1>
+
+            <div class="voice-studio">
+                <h3 style="text-align: center; margin-bottom: 2rem;">Record or Upload Your Message</h3>
+
+                <!-- Recording Section -->
+                <div class="recording-controls">
+                    <div class="timer" id="timer">00:00</div>
+                    
+                    <div class="record-button" id="recordButton" onclick="toggleRecording()">
+                        <i class="fas fa-microphone"></i>
+                    </div>
+
+                    <div class="waveform" id="waveform">
+                        <!-- Waveform bars will be generated here -->
+                    </div>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn" onclick="playRecording()" id="playBtn" style="display: none;">
+                            <i class="fas fa-play"></i> Play
+                        </button>
+                        <button class="btn" onclick="resetRecording()" id="resetBtn" style="display: none;">
+                            <i class="fas fa-redo"></i> Re-record
+                        </button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 2rem 0; color: var(--text-gray);">
+                    — OR —
+                </div>
+
+                <!-- Upload Section -->
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('audioFile').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--accent-gold); margin-bottom: 1rem;"></i>
+                    <p>Click to upload or drag and drop</p>
+                    <p style="color: var(--text-gray); font-size: 0.875rem;">MP3, WAV, M4A, OGG (max 50MB)</p>
+                    <input type="file" id="audioFile" accept="audio/*" style="display: none;" onchange="handleAudioUpload(event)">
+                </div>
+
+                <button class="btn btn-gold" onclick="navigate('preview')" id="continueBtn" style="width: 100%; margin-top: 2rem; display: none;">
+                    Continue to Preview <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview & Send Page -->
+    <div id="preview-page" class="page">
+        <div class="container">
+            <div class="progress-steps">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step active">3</div>
+            </div>
+
+            <h1 style="text-align: center; margin-bottom: 2rem;">Preview Your Card</h1>
+
+            <div class="card-preview-container">
+                <div class="card-preview" id="cardPreview">
+                    <div style="font-size: 5rem; margin-bottom: 1rem;" id="previewEmoji">🎂</div>
+                    <h2 id="previewTitle">Happy Birthday!</h2>
+                    <p style="color: var(--text-gray); margin: 1rem 0;" id="previewMessage">Wishing you joy and happiness!</p>
+                    <button class="btn" onclick="playPreview()">
+                        <i class="fas fa-play"></i> Play Voice Message
+                    </button>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-card); padding: 2rem; border-radius: 16px; margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Card Details</h3>
+                <div style="display: grid; gap: 1rem;">
+                    <div>
+                        <label style="color: var(--text-gray);">Recipient Name</label>
+                        <input type="text" id="recipientName" placeholder="Enter name" style="width: 100%; padding: 0.75rem; background: rgba(15, 10, 31, 0.5); border: 1px solid rgba(107, 33, 168, 0.3); border-radius: 8px; color: white;">
+                    </div>
+                    <div>
+                        <label style="color: var(--text-gray);">Recipient Email (optional)</label>
+                        <input type="email" id="recipientEmail" placeholder="email@example.com" style="width: 100%; padding: 0.75rem; background: rgba(15, 10, 31, 0.5); border: 1px solid rgba(107, 33, 168, 0.3); border-radius: 8px; color: white;">
+                    </div>
+                </div>
+
+                <button class="btn btn-gold" onclick="sendCard()" style="width: 100%; margin-top: 2rem;">
+                    <i class="fas fa-paper-plane"></i> Send Card
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" class="page">
+        <div class="container">
+            <h1 style="margin-bottom: 2rem;">My Cards</h1>
+
+            <div id="userInfo" style="background: var(--bg-card); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 id="userName">Loading...</h3>
+                        <p style="color: var(--text-gray);" id="userTier">FREE Tier</p>
+                    </div>
+                    <button class="btn btn-gold" onclick="navigate('themes')">
+                        <i class="fas fa-plus"></i> Create Card
+                    </button>
+                </div>
+                <div id="cardUsage" style="margin-top: 1rem; color: var(--text-gray);"></div>
+            </div>
+
+            <div id="cardsList" style="display: grid; gap: 1rem;">
+                <!-- Cards will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgradeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('upgradeModal')">&times;</span>
+            <h2 style="margin-bottom: 1rem;">Upgrade Required</h2>
+            <p style="color: var(--text-gray); margin-bottom: 2rem;" id="upgradeMessage">
+                You've reached your card limit. Upgrade to create more cards!
+            </p>
+            
+            <div style="display: grid; gap: 1rem;">
+                <button class="btn btn-gold" onclick="upgradeToTier('KEEPER')">
+                    Upgrade to Keeper - $14.99/month
+                </button>
+                <button class="btn btn-gold" onclick="upgradeToTier('LEGACY')">
+                    Upgrade to Legacy - $24.99/month
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_URL = 'http://localhost:3001/api';
+        let currentUser = null;
+        let selectedTheme = null;
+        let audioBlob = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordingStartTime = null;
+        let timerInterval = null;
+        let currentCard = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadThemes();
+            setupDragDrop();
+        });
+
+        // Auth functions
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    currentUser = await response.json();
+                    currentUser = currentUser.user;
+                    updateUserInfo();
+                } else {
+                    localStorage.removeItem('token');
+                    window.location.href = '/login.html';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        }
+
+        function updateUserInfo() {
+            if (!currentUser) return;
+
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userTier').textContent = `${currentUser.tier} Tier`;
+
+            const tierLimits = {
+                FREE: { cards: 1, text: 'You have 1 free card' },
+                KEEPER: { cards: 10, text: `${currentUser.cardsUsedThisMonth || 0}/10 cards this month` },
+                LEGACY: { cards: Infinity, text: 'Unlimited cards' }
+            };
+
+            const limit = tierLimits[currentUser.tier];
+            document.getElementById('cardUsage').textContent = limit.text;
+
+            // Show tier info on themes page
+            if (currentUser.tier === 'FREE') {
+                const tierInfo = document.getElementById('tierInfo');
+                const tierText = document.getElementById('tierText');
+                tierInfo.style.display = 'flex';
+                tierText.textContent = 'FREE tier: You can create 1 card. Upgrade for more!';
+            }
+        }
+
+        // Load themes
+        async function loadThemes() {
+            try {
+                const response = await fetch(`${API_URL}/cards/themes/list`);
+                const data = await response.json();
+                const themes = data.themes;
+
+                const grid = document.getElementById('themeGrid');
+                grid.innerHTML = themes.map(theme => `
+                    <div class="theme-card" onclick="selectTheme('${theme.id}')">
+                        <div class="theme-preview" style="background: ${theme.colors.background}">
+                            <span>${theme.emoji}</span>
+                        </div>
+                        <div class="theme-info">
+                            <h3>${theme.name}</h3>
+                            <p>${theme.description}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Failed to load themes:', error);
+            }
+        }
+
+        function selectTheme(themeId) {
+            selectedTheme = themeId;
+            navigate('voice');
+        }
+
+        // Voice recording
+        async function toggleRecording() {
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                await startRecording();
+            } else {
+                stopRecording();
+            }
+        }
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    document.getElementById('playBtn').style.display = 'inline-block';
+                    document.getElementById('resetBtn').style.display = 'inline-block';
+                    document.getElementById('continueBtn').style.display = 'block';
+                };
+
+                mediaRecorder.start();
+                recordingStartTime = Date.now();
+                document.getElementById('recordButton').classList.add('recording');
+                document.getElementById('recordButton').innerHTML = '<i class="fas fa-stop"></i>';
+                startTimer();
+            } catch (error) {
+                console.error('Microphone access denied:', error);
+                alert('Please allow microphone access to record audio.');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                document.getElementById('recordButton').classList.remove('recording');
+                document.getElementById('recordButton').innerHTML = '<i class="fas fa-microphone"></i>';
+                stopTimer();
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('timer').textContent = 
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetRecording() {
+            audioBlob = null;
+            audioChunks = [];
+            document.getElementById('timer').textContent = '00:00';
+            document.getElementById('playBtn').style.display = 'none';
+            document.getElementById('resetBtn').style.display = 'none';
+            document.getElementById('continueBtn').style.display = 'none';
+        }
+
+        function playRecording() {
+            if (audioBlob) {
+                const audio = new Audio(URL.createObjectURL(audioBlob));
+                audio.play();
+            }
+        }
+
+        // File upload
+        function setupDragDrop() {
+            const zone = document.getElementById('uploadZone');
+            
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('dragover');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('audio/')) {
+                    handleAudioFile(file);
+                }
+            });
+        }
+
+        function handleAudioUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleAudioFile(file);
+            }
+        }
+
+        function handleAudioFile(file) {
+            audioBlob = file;
+            document.getElementById('continueBtn').style.display = 'block';
+            alert(`Audio file "${file.name}" loaded successfully!`);
+        }
+
+        // Send card
+        async function sendCard() {
+            const recipientName = document.getElementById('recipientName').value;
+            if (!recipientName) {
+                alert('Please enter recipient name');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                
+                // Create card
+                const cardResponse = await fetch(`${API_URL}/cards`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        themeId: selectedTheme,
+                        title: 'Voice Message Card',
+                        message: 'Personalized voice message',
+                        senderName: currentUser.name,
+                        recipientName: recipientName,
+                        recipientEmail: document.getElementById('recipientEmail').value
+                    })
+                });
+
+                const cardData = await cardResponse.json();
+
+                if (!cardResponse.ok) {
+                    if (cardData.upgradeRequired) {
+                        document.getElementById('upgradeMessage').textContent = cardData.message || cardData.error;
+                        document.getElementById('upgradeModal').classList.add('active');
+                        return;
+                    }
+                    throw new Error(cardData.error || 'Failed to create card');
+                }
+
+                currentCard = cardData.card;
+
+                // Upload audio
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'recording.webm');
+                formData.append('duration', 60);
+
+                const audioResponse = await fetch(`${API_URL}/cards/${currentCard.id}/audio`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (!audioResponse.ok) {
+                    throw new Error('Failed to upload audio');
+                }
+
+                // Send card
+                const sendResponse = await fetch(`${API_URL}/cards/${currentCard.id}/send`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const sendData = await sendResponse.json();
+
+                alert(`Card sent successfully! Share link: ${sendData.shareUrl}`);
+                navigate('dashboard');
+                await loadDashboard();
+            } catch (error) {
+                console.error('Send card error:', error);
+                alert('Failed to send card: ' + error.message);
+            }
+        }
+
+        // Upgrade
+        async function upgradeToTier(tier) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/payments/create-checkout`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ tier })
+                });
+
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                }
+            } catch (error) {
+                console.error('Upgrade error:', error);
+                alert('Failed to start checkout');
+            }
+        }
+
+        // Dashboard
+        async function loadDashboard() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/cards`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+                const cardsList = document.getElementById('cardsList');
+
+                if (data.cards.length === 0) {
+                    cardsList.innerHTML = '<p style="text-align: center; color: var(--text-gray);">No cards yet. Create your first one!</p>';
+                    return;
+                }
+
+                cardsList.innerHTML = data.cards.map(card => `
+                    <div style="background: var(--bg-card); padding: 1.5rem; border-radius: 12px;">
+                        <h3>${card.title}</h3>
+                        <p style="color: var(--text-gray);">To: ${card.recipientName}</p>
+                        <p style="color: var(--text-gray); font-size: 0.875rem;">
+                            Status: ${card.status} | Opens: ${card.openCount}
+                        </p>
+                        <p style="color: var(--accent-gold); font-size: 0.875rem; margin-top: 0.5rem;">
+                            Share: ${window.location.origin}/open/${card.shareToken}
+                        </p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Load dashboard error:', error);
+            }
+        }
+
+        // Navigation
+        function navigate(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(page + '-page').classList.add('active');
+
+            if (page === 'dashboard') {
+                loadDashboard();
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function playPreview() {
+            if (audioBlob) {
+                const audio = new Audio(URL.createObjectURL(audioBlob));
+                audio.play();
+            }
+        }
+    </script>
+</body>
+</html>
