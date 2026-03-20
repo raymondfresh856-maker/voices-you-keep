@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voices You Keep™️ - Preserve Memories Forever</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-purple: #6B21A8;
+            --deep-purple: #4C1D95;
+            --accent-gold: #F59E0B;
+            --rose-gold: #FCA5A5;
+            --bg-dark: #0F0A1F;
+            --bg-card: #1A1330;
+            --text-light: #F3F4F6;
+            --text-gray: #9CA3AF;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1F1345 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 10, 31, 0.95);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(107, 33, 168, 0.2);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-gold), var(--rose-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--rose-gold));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--accent-gold);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary-purple), var(--deep-purple));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(107, 33, 168, 0.4);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--accent-gold);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Page Container */
+        .page {
+            opacity: 0;
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+            padding: 6rem 2rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Privacy Badge */
+        .privacy-banner {
+            background: rgba(76, 29, 149, 0.3);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .privacy-banner i {
+            color: var(--accent-gold);
+            margin-right: 0.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--rose-gold) 50%, #FBBF24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(107, 33, 168, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-gold);
+            box-shadow: 0 12px 30px rgba(107, 33, 168, 0.4);
+        }
+
+        .feature-card i {
+            font-size: 3rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 2px solid rgba(107, 33, 168, 0.3);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--accent-gold);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent-gold), var(--rose-gold));
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-gold);
+        }
+
+        .pricing-card h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-card .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin: 1rem 0;
+        }
+
+        .pricing-card .price span {
+            font-size: 1rem;
+            color: var(--text-gray);
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .pricing-card li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(107, 33, 168, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pricing-card li i {
+            color: var(--accent-gold);
+        }
+
+        .pricing-card li.locked i {
+            color: var(--text-gray);
+        }
+
+        /* Steps Section */
+        .steps-container {
+            margin: 4rem 0;
+        }
+
+        .step {
+            display: flex;
+            gap: 2rem;
+            margin: 3rem 0;
+            align-items: center;
+        }
+
+        .step:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .step-number {
+            font-size: 5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-gold), var(--rose-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.3;
+            min-width: 100px;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-content p {
+            color: var(--text-gray);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            max-width: 500px;
+            margin: 4rem auto;
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(107, 33, 168, 0.3);
+        }
+
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-gray);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(15, 10, 31, 0.5);
+            border: 1px solid rgba(107, 33, 168, 0.3);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+
+        .social-login {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .social-btn {
+            padding: 1rem;
+            background: rgba(76, 29, 149, 0.3);
+            border: 1px solid rgba(107, 33, 168, 0.3);
+            border-radius: 8px;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .social-btn:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--text-gray);
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: rgba(107, 33, 168, 0.3);
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .auth-link {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-gray);
+        }
+
+        .auth-link a {
+            color: var(--accent-gold);
+            text-decoration: none;
+        }
+
+        /* Legal Pages */
+        .legal-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .legal-content h2 {
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .legal-content h3 {
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.5rem;
+        }
+
+        .legal-content p {
+            margin-bottom: 1rem;
+            color: var(--text-gray);
+        }
+
+        .legal-content ul {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .legal-content li {
+            margin-bottom: 0.5rem;
+            color: var(--text-gray);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(15, 10, 31, 0.95);
+            padding: 4rem 2rem 2rem;
+            margin-top: 6rem;
+            border-top: 1px solid rgba(107, 33, 168, 0.2);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--accent-gold);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-gold);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(107, 33, 168, 0.2);
+            color: var(--text-gray);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: rgba(15, 10, 31, 0.98);
+                flex-direction: column;
+                padding: 2rem;
+                transform: translateY(-120%);
+                transition: transform 0.3s ease;
+                border-bottom: 1px solid rgba(107, 33, 168, 0.3);
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .step {
+                flex-direction: column !important;
+            }
+
+            .step-number {
+                font-size: 3rem;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo" onclick="navigate('home')">Voices You Keep™️</div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#/home" onclick="navigate('home')" class="nav-link">Home</a></li>
+            <li><a href="#/how-it-works" onclick="navigate('how-it-works')" class="nav-link">How It Works</a></li>
+            <li><a href="#/pricing" onclick="navigate('pricing')" class="nav-link">Pricing</a></li>
+            <li><a href="#/login" onclick="navigate('login')" class="nav-link">Login</a></li>
+            <li><a href="#/signup" onclick="navigate('signup')" class="cta-button">Get Started</a></li>
+        </ul>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page active">
+        <div class="hero">
+            <h1>Preserve Voices That Matter</h1>
+            <p>Send personalized voice message greeting cards with beautiful animations. Create lasting memories that live forever.</p>
+            <button class="cta-button" onclick="navigate('signup')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+                Create Your First Card <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <div class="privacy-banner">
+            <i class="fas fa-shield-alt"></i>
+            <strong>Your Privacy Guaranteed:</strong> We never share, sell, or use your voice recordings to train AI. Your memories are yours alone.
+        </div>
+
+        <h2 style="text-align: center; font-size: 3rem; margin: 4rem 0 2rem;">Why Choose Voices You Keep™️</h2>
+
+        <div class="feature-grid">
+            <div class="feature-card" onclick="navigate('how-it-works')">
+                <i class="fas fa-microphone"></i>
+                <h3>Easy Recording</h3>
+                <p>Record your voice message in seconds with our intuitive studio. High-quality audio capture with real-time waveform visualization.</p>
+            </div>
+
+            <div class="feature-card" onclick="navigate('how-it-works')">
+                <i class="fas fa-envelope-open-text"></i>
+                <h3>Beautiful Envelopes</h3>
+                <p>Interactive 3D envelope animations with physics-based opening. Your recipient will love the magical unwrapping experience.</p>
+            </div>
+
+            <div class="feature-card" onclick="navigate('pricing')">
+                <i class="fas fa-calendar-alt"></i>
+                <h3>Schedule Delivery</h3>
+                <p>Never forget an important occasion. Schedule cards to be delivered automatically on birthdays, anniversaries, and special dates.</p>
+            </div>
+
+            <div class="feature-card" onclick="navigate('pricing')">
+                <i class="fas fa-archive"></i>
+                <h3>Voice Vault™️</h3>
+                <p>Preserve precious voice recordings of loved ones forever. Create a digital memorial with photos and audio that lasts generations.</p>
+            </div>
+
+            <div class="feature-card" onclick="navigate('signup')">
+                <i class="fas fa-palette"></i>
+                <h3>Beautiful Themes</h3>
+                <p>12 stunning card designs for every occasion. Birthday, graduation, anniversary, holidays, and more with custom particles.</p>
+            </div>
+
+            <div class="feature-card" onclick="navigate('privacy')">
+                <i class="fas fa-lock"></i>
+                <h3>Privacy First</h3>
+                <p>Bank-level encryption. Your voice recordings will never be used to train AI or shared with third parties. Ever.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 6rem 0;">
+            <h2 style="font-size: 3rem; margin-bottom: 2rem;">Ready to Get Started?</h2>
+            <button class="cta-button" onclick="navigate('pricing')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+                See Our Plans <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- How It Works Page -->
+    <div id="how-it-works-page" class="page">
+        <div class="hero">
+            <h1>How It Works</h1>
+            <p>Create and send beautiful voice message cards in 4 simple steps</p>
+        </div>
+
+        <div class="privacy-banner">
+            <i class="fas fa-shield-alt"></i>
+            <strong>Privacy Guarantee:</strong> Your voice recordings are encrypted and never used for AI training or shared with third parties.
+        </div>
+
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Choose Your Theme</h3>
+                    <p>Select from 12 beautifully designed card themes perfect for any occasion. Each theme features unique animations, colors, and particle effects. From birthdays to anniversaries, graduations to thank you notes, we have the perfect design waiting for you.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>Record Your Voice</h3>
+                    <p>Use our professional voice studio to record your heartfelt message. See your voice in real-time with our waveform visualizer. Record up to 3 minutes, pause and resume recording, or upload an existing audio file. Add background music to make it even more special.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Customize & Preview</h3>
+                    <p>Personalize your card with the recipient's name and a custom message. Preview the entire experience including the envelope animation, card reveal, and audio playback. Make sure everything is perfect before sending.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <h3>Send or Schedule</h3>
+                    <p>Share your card via email, text message, or unique link. Generate a QR code for print cards. Or schedule delivery for a future date so it arrives exactly when you want. Your recipient opens an interactive envelope to reveal your voice message with beautiful particle effects.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="feature-grid" style="margin-top: 6rem;">
+            <div class="feature-card">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Works Everywhere</h3>
+                <p>Desktop, mobile, tablet - your cards look stunning on any device. No app download required.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-bolt"></i>
+                <h3>Lightning Fast</h3>
+                <p>Create and send a card in under 5 minutes. Our optimized platform ensures smooth 60fps animations.</p>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-heart"></i>
+                <h3>Emotionally Powerful</h3>
+                <p>Voice carries emotion that text never can. Create memories that last forever with the power of the human voice.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 6rem 0;">
+            <h2 style="font-size: 3rem; margin-bottom: 2rem;">Ready to Create Your First Card?</h2>
+            <button class="cta-button" onclick="navigate('signup')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+                Get Started Free <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Pricing Page -->
+    <div id="pricing-page" class="page">
+        <div class="hero">
+            <h1>Simple, Transparent Pricing</h1>
+            <p>Choose the plan that's right for you. Upgrade or cancel anytime.</p>
+        </div>
+
+        <div class="privacy-banner">
+            <i class="fas fa-shield-alt"></i>
+            <strong>Your Data Is Safe:</strong> We never share, sell, or use your voice recordings to train AI. All plans include full privacy protection.
+        </div>
+
+        <div class="pricing-grid">
+            <!-- Free Tier -->
+            <div class="pricing-card">
+                <h3>Starter</h3>
+                <div class="price">
+                    $0<span>/forever</span>
+                </div>
+                <p style="color: var(--text-gray); margin-bottom: 2rem;">Perfect for trying out Voices You Keep™️</p>
+                <ul>
+                    <li><i class="fas fa-check"></i> 3 cards (lifetime)</li>
+                    <li><i class="fas fa-check"></i> 4 basic themes</li>
+                    <li><i class="fas fa-check"></i> 60-second recordings</li>
+                    <li><i class="fas fa-check"></i> Email & link sharing</li>
+                    <li class="locked"><i class="fas fa-lock"></i> Watermark on cards</li>
+                    <li class="locked"><i class="fas fa-lock"></i> No scheduled delivery</li>
+                    <li class="locked"><i class="fas fa-lock"></i> No Voice Vault</li>
+                    <li class="locked"><i class="fas fa-lock"></i> No background music</li>
+                </ul>
+                <button class="cta-button" onclick="navigate('signup')" style="width: 100%; margin-top: 1rem;">Get Started Free</button>
+            </div>
+
+            <!-- Keeper Tier -->
+            <div class="pricing-card featured">
+                <h3>Keeper</h3>
+                <div class="price">
+                    $14.99<span>/month</span>
+                </div>
+                <p style="color: var(--text-gray); margin-bottom: 2rem;">For regular card senders</p>
+                <ul>
+                    <li><i class="fas fa-check"></i> 10 cards per month</li>
+                    <li><i class="fas fa-check"></i> All 12 themes</li>
+                    <li><i class="fas fa-check"></i> 3-minute recordings</li>
+                    <li><i class="fas fa-check"></i> No watermarks</li>
+                    <li><i class="fas fa-check"></i> <strong>Scheduled delivery</strong></li>
+                    <li><i class="fas fa-check"></i> Background music</li>
+                    <li><i class="fas fa-check"></i> Email support</li>
+                    <li class="locked"><i class="fas fa-lock"></i> No Voice Vault</li>
+                </ul>
+                <button class="cta-button" onclick="navigate('signup')" style="width: 100%; margin-top: 1rem; background: linear-gradient(135deg, var(--accent-gold), var(--rose-gold));">Start Free Trial</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-gray);">7-day money-back guarantee</p>
+            </div>
+
+            <!-- Legacy Tier -->
+            <div class="pricing-card">
+                <h3>Legacy</h3>
+                <div class="price">
+                    $24.99<span>/month</span>
+                </div>
+                <p style="color: var(--text-gray); margin-bottom: 2rem;">For preserving memories forever</p>
+                <ul>
+                    <li><i class="fas fa-check"></i> <strong>Unlimited cards</strong></li>
+                    <li><i class="fas fa-check"></i> All 12 themes</li>
+                    <li><i class="fas fa-check"></i> 3-minute recordings</li>
+                    <li><i class="fas fa-check"></i> No watermarks</li>
+                    <li><i class="fas fa-check"></i> <strong>Scheduled delivery</strong></li>
+                    <li><i class="fas fa-check"></i> Background music</li>
+                    <li><i class="fas fa-check"></i> <strong>Voice Vault™️ (Unlimited)</strong></li>
+                    <li><i class="fas fa-check"></i> Priority support</li>
+                </ul>
+                <button class="cta-button" onclick="navigate('signup')" style="width: 100%; margin-top: 1rem;">Start Free Trial</button>
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--text-gray);">7-day money-back guarantee</p>
+            </div>
+        </div>
+
+        <div class="privacy-banner" style="margin-top: 4rem;">
+            <h3 style="margin-bottom: 1rem;">What is Voice Vault™️?</h3>
+            <p style="color: var(--text-gray);">Voice Vault is our exclusive Legacy feature that lets you preserve precious voice recordings of loved ones forever. Upload voicemails, recordings, or videos along with photos to create a digital memorial. Perfect for preserving the voices of family members, capturing children's voices as they grow, or honoring those who have passed away. Your voice memories are encrypted and stored safely, accessible anytime, anywhere.</p>
+        </div>
+
+        <div style="text-align: center; margin: 6rem 0;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Questions? We're Here to Help</h2>
+            <p style="color: var(--text-gray); margin-bottom: 2rem;">Contact us at <a href="mailto:support@voicesyoukeep.com" style="color: var(--accent-gold);">support@voicesyoukeep.com</a></p>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page">
+        <div class="auth-container">
+            <h2>Welcome Back</h2>
+            
+            <div class="social-login">
+                <button class="social-btn">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="social-btn">
+                    <i class="fab fa-apple"></i> Apple
+                </button>
+            </div>
+
+            <div class="divider">OR</div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Log In</button>
+            </form>
+
+            <div class="auth-link">
+                Don't have an account? <a href="#/signup" onclick="navigate('signup')">Sign up</a>
+            </div>
+        </div>
+
+        <div class="privacy-banner" style="max-width: 500px; margin: 2rem auto;">
+            <i class="fas fa-shield-alt"></i>
+            Your login is secured with bank-level encryption. We never store your password in plain text.
+        </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signup-page" class="page">
+        <div class="auth-container">
+            <h2>Create Your Account</h2>
+            
+            <div class="social-login">
+                <button class="social-btn">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button class="social-btn">
+                    <i class="fab fa-apple"></i> Apple
+                </button>
+            </div>
+
+            <div class="divider">OR</div>
+
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="At least 8 characters" required minlength="8">
+                </div>
+
+                <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Create Account</button>
+            </form>
+
+            <div class="auth-link">
+                Already have an account? <a href="#/login" onclick="navigate('login')">Log in</a>
+            </div>
+        </div>
+
+        <div class="privacy-banner" style="max-width: 500px; margin: 2rem auto;">
+            <i class="fas fa-shield-alt"></i>
+            By creating an account, you agree to our <a href="#/terms" onclick="navigate('terms')" style="color: var(--accent-gold);">Terms of Service</a> and <a href="#/privacy" onclick="navigate('privacy')" style="color: var(--accent-gold);">Privacy Policy</a>. We never share your data with third parties.
+        </div>
+    </div>
+
+    <!-- Privacy Policy Page -->
+    <div id="privacy-page" class="page">
+        <div class="legal-content">
+            <h1 style="text-align: center; margin-bottom: 1rem;">Privacy Policy</h1>
+            <p style="text-align: center; color: var(--text-gray); margin-bottom: 3rem;">
+                <strong>Effective Date:</strong> March 14, 2026<br>
+                <strong>Last Updated:</strong> March 14, 2026
+            </p>
+
+            <div class="privacy-banner">
+                <i class="fas fa-shield-alt"></i>
+                <strong>Our Promise:</strong> Your voice recordings will NEVER be used to train AI, machine learning models, or any algorithmic systems. We do not sell, share, or process your audio data for any purpose beyond the service you requested.
+            </div>
+
+            <h2>1. Introduction</h2>
+            <p>Welcome to Voices You Keep™️ ("we," "our," or "us"). We are committed to protecting your privacy and the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our voice message greeting card platform.</p>
+
+            <h2>2. Information We Collect</h2>
+            
+            <h3>2.1 Information You Provide</h3>
+            <ul>
+                <li><strong>Account Information:</strong> Name, email address, password (encrypted)</li>
+                <li><strong>Voice Recordings:</strong> Audio files you record or upload</li>
+                <li><strong>Card Content:</strong> Messages, recipient names, occasion details</li>
+                <li><strong>Payment Information:</strong> Processed securely through Stripe (we never store your credit card details)</li>
+                <li><strong>Voice Vault Content:</strong> Photos, audio, and video files you choose to preserve (Legacy tier only)</li>
+            </ul>
+
+            <h3>2.2 Information Collected Automatically</h3>
+            <ul>
+                <li><strong>Usage Data:</strong> Pages visited, features used, time spent on platform</li>
+                <li><strong>Device Information:</strong> Browser type, operating system, IP address</li>
+                <li><strong>Performance Data:</strong> Error logs, loading times (for improving service quality)</li>
+            </ul>
+
+            <h2>3. How We Use Your Information</h2>
+            
+            <h3>3.1 Primary Uses</h3>
+            <ul>
+                <li><strong>Service Delivery:</strong> Creating, storing, and delivering your voice message cards</li>
+                <li><strong>Account Management:</strong> Managing your subscription, billing, and preferences</li>
+                <li><strong>Scheduled Delivery:</strong> Sending cards on your scheduled dates (Keeper/Legacy tiers)</li>
+                <li><strong>Voice Vault:</strong> Securely storing your memorial voice recordings (Legacy tier)</li>
+            </ul>
+
+            <h3>3.2 We DO NOT Use Your Data For</h3>
+            <ul>
+                <li>❌ Training AI or machine learning models</li>
+                <li>❌ Voice recognition or biometric analysis</li>
+                <li>❌ Selling or sharing with third-party advertisers</li>
+                <li>❌ Marketing purposes without explicit consent</li>
+                <li>❌ Any purpose other than delivering our service to you</li>
+            </ul>
+
+            <h2>4. Data Security</h2>
+            <p>We implement industry-standard security measures to protect your data:</p>
+            <ul>
+                <li><strong>Encryption:</strong> All data is encrypted in transit (TLS 1.3) and at rest (AES-256)</li>
+                <li><strong>Access Controls:</strong> Strict employee access policies with multi-factor authentication</li>
+                <li><strong>Regular Audits:</strong> Third-party security audits conducted annually</li>
+                <li><strong>Secure Infrastructure:</strong> Data stored in SOC 2 Type II certified data centers</li>
+                <li><strong>Password Security:</strong> Passwords are hashed using bcrypt with salt</li>
+            </ul>
+
+            <h2>5. Data Sharing and Disclosure</h2>
+            
+            <h3>5.1 We Share Data Only With:</h3>
+            <ul>
+                <li><strong>Stripe:</strong> For payment processing (they have their own privacy policy)</li>
+                <li><strong>Email Service:</strong> For delivering scheduled card notifications</li>
+                <li><strong>Cloud Storage:</strong> For securely hosting your audio files (encrypted)</li>
+            </ul>
+
+            <h3>5.2 We May Disclose Data Only When:</h3>
+            <ul>
+                <li>Required by law or legal process</li>
+                <li>Necessary to protect our rights or property</li>
+                <li>You give explicit written consent</li>
+            </ul>
+
+            <h2>6. Your Rights and Choices</h2>
+            <p>You have the following rights regarding your personal data:</p>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of all data we hold about you</li>
+                <li><strong>Correction:</strong> Update or correct inaccurate information</li>
+                <li><strong>Deletion:</strong> Request deletion of your account and all associated data</li>
+                <li><strong>Export:</strong> Download your voice recordings and card data</li>
+                <li><strong>Opt-Out:</strong> Unsubscribe from marketing emails at any time</li>
+                <li><strong>Data Portability:</strong> Transfer your data to another service</li>
+            </ul>
+
+            <h2>7. Data Retention</h2>
+            <ul>
+                <li><strong>Active Accounts:</strong> Data retained as long as your account is active</li>
+                <li><strong>Closed Accounts:</strong> Data deleted within 30 days of account closure</li>
+                <li><strong>Voice Vault:</strong> Retained until you explicitly request deletion</li>
+                <li><strong>Legal Obligations:</strong> Some data may be retained longer if required by law</li>
+            </ul>
+
+            <h2>8. Children's Privacy</h2>
+            <p>Our service is not intended for children under 13. We do not knowingly collect personal information from children under 13. If you believe we have inadvertently collected such information, please contact us immediately.</p>
+
+            <h2>9. International Data Transfers</h2>
+            <p>Your data may be processed in countries outside your own. We ensure appropriate safeguards are in place, including:</p>
+            <ul>
+                <li>Standard Contractual Clauses (EU)</li>
+                <li>Privacy Shield certification (where applicable)</li>
+                <li>Adequacy decisions by relevant authorities</li>
+            </ul>
+
+            <h2>10. Cookies and Tracking</h2>
+            <p>We use essential cookies for authentication and functionality. We do not use advertising or tracking cookies. You can disable cookies in your browser, but this may affect functionality.</p>
+
+            <h2>11. Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. We will notify you of significant changes via email and update the "Last Updated" date. Continued use of our service after changes constitutes acceptance.</p>
+
+            <h2>12. Contact Us</h2>
+            <p>If you have any questions, concerns, or requests regarding this Privacy Policy or your personal data:</p>
+            <ul>
+                <li><strong>Email:</strong> privacy@voicesyoukeep.com</li>
+                <li><strong>Support:</strong> support@voicesyoukeep.com</li>
+                <li><strong>Response Time:</strong> We respond within 48 hours</li>
+            </ul>
+
+            <h2>13. Compliance</h2>
+            <p>This Privacy Policy complies with:</p>
+            <ul>
+                <li>General Data Protection Regulation (GDPR) - EU</li>
+                <li>California Consumer Privacy Act (CCPA) - California, USA</li>
+                <li>Personal Information Protection and Electronic Documents Act (PIPEDA) - Canada</li>
+            </ul>
+
+            <div class="privacy-banner" style="margin-top: 4rem;">
+                <i class="fas fa-heart"></i>
+                <strong>Our Core Value:</strong> Your memories are sacred. We treat your voice recordings with the utmost respect and security. They belong to you and you alone.
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Page -->
+    <div id="terms-page" class="page">
+        <div class="legal-content">
+            <h1 style="text-align: center; margin-bottom: 1rem;">Terms of Service</h1>
+            <p style="text-align: center; color: var(--text-gray); margin-bottom: 3rem;">
+                <strong>Effective Date:</strong> March 14, 2026<br>
+                <strong>Last Updated:</strong> March 14, 2026
+            </p>
+
+            <div class="privacy-banner">
+                <i class="fas fa-info-circle"></i>
+                Please read these Terms of Service carefully before using Voices You Keep™️. By accessing or using our service, you agree to be bound by these terms.
+            </div>
+
+            <h2>1. Acceptance of Terms</h2>
+            <p>By creating an account or using Voices You Keep™️ (the "Service"), you agree to these Terms of Service ("Terms"). If you do not agree, do not use the Service. These Terms constitute a legally binding agreement between you and Voices You Keep™️.</p>
+
+            <h2>2. Description of Service</h2>
+            <p>Voices You Keep™️ provides a platform for creating, customizing, and sending digital greeting cards with voice messages. Our services include:</p>
+            <ul>
+                <li>Voice recording and audio upload capabilities</li>
+                <li>Animated digital card creation and customization</li>
+                <li>Card delivery via email, link, and scheduled sending</li>
+                <li>Voice Vault™️ for preserving voice recordings (Legacy tier)</li>
+                <li>Theme templates and design tools</li>
+            </ul>
+
+            <h2>3. Account Registration and Security</h2>
+            
+            <h3>3.1 Account Creation</h3>
+            <ul>
+                <li>You must be at least 13 years old to create an account</li>
+                <li>You must provide accurate and complete information</li>
+                <li>You are responsible for maintaining the confidentiality of your password</li>
+                <li>You are responsible for all activities under your account</li>
+            </ul>
+
+            <h3>3.2 Account Security</h3>
+            <ul>
+                <li>Notify us immediately of any unauthorized use</li>
+                <li>Use a strong, unique password</li>
+                <li>Do not share your account credentials</li>
+                <li>We are not liable for losses from unauthorized use of your account</li>
+            </ul>
+
+            <h2>4. Subscription Plans and Billing</h2>
+            
+            <h3>4.1 Subscription Tiers</h3>
+            <ul>
+                <li><strong>Starter (Free):</strong> 3 lifetime cards, limited features</li>
+                <li><strong>Keeper ($14.99/month):</strong> 10 cards/month, scheduled delivery, all themes</li>
+                <li><strong>Legacy ($24.99/month):</strong> Unlimited cards, Voice Vault, all features</li>
+            </ul>
+
+            <h3>4.2 Payment Terms</h3>
+            <ul>
+                <li>Subscriptions are billed monthly in advance</li>
+                <li>All payments are processed securely through Stripe</li>
+                <li>Prices are subject to change with 30 days' notice</li>
+                <li>You authorize us to charge your payment method automatically</li>
+                <li>Failed payments may result in service suspension</li>
+            </ul>
+
+            <h3>4.3 Free Trial</h3>
+            <ul>
+                <li>New subscribers may receive a 7-day free trial</li>
+                <li>You will be charged after the trial period unless you cancel</li>
+                <li>Cancel anytime during the trial to avoid charges</li>
+            </ul>
+
+            <h2>5. Refund Policy</h2>
+            
+            <h3>5.1 7-Day Money-Back Guarantee</h3>
+            <ul>
+                <li>Request a full refund within 7 days of your first payment</li>
+                <li>Contact support@voicesyoukeep.com to request a refund</li>
+                <li>Refunds processed within 5-10 business days</li>
+            </ul>
+
+            <h3>5.2 Monthly Subscriptions</h3>
+            <ul>
+                <li>No refunds for partial months</li>
+                <li>Cancellation takes effect at the end of the current billing period</li>
+                <li>You retain access to features until the end of the paid period</li>
+            </ul>
+
+            <h2>6. Acceptable Use Policy</h2>
+            
+            <h3>6.1 You Agree NOT To:</h3>
+            <ul>
+                <li>Upload illegal, harmful, or offensive content</li>
+                <li>Harass, threaten, or impersonate others</li>
+                <li>Spam or send unsolicited communications</li>
+                <li>Upload copyrighted material without permission</li>
+                <li>Attempt to hack, reverse engineer, or abuse the Service</li>
+                <li>Use automated systems to access the Service</li>
+                <li>Share explicit, violent, or hateful content</li>
+            </ul>
+
+            <h3>6.2 Consequences of Violation</h3>
+            <ul>
+                <li>Content removal without notice</li>
+                <li>Account suspension or termination</li>
+                <li>Legal action if necessary</li>
+                <li>No refund for terminated accounts</li>
+            </ul>
+
+            <h2>7. Intellectual Property</h2>
+            
+            <h3>7.1 Your Content</h3>
+            <ul>
+                <li>You retain all rights to your voice recordings and content</li>
+                <li>You grant us a license to store, process, and deliver your content</li>
+                <li>This license ends when you delete your content or account</li>
+            </ul>
+
+            <h3>7.2 Our Content</h3>
+            <ul>
+                <li>All card designs, themes, and platform features are our property</li>
+                <li>You may not copy, reproduce, or distribute our designs</li>
+                <li>Voices You Keep™️ and our logo are registered trademarks</li>
+            </ul>
+
+            <h2>8. Privacy and Data Protection</h2>
+            <p>Your use of the Service is also governed by our <a href="#/privacy" onclick="navigate('privacy')" style="color: var(--accent-gold);">Privacy Policy</a>. Key points:</p>
+            <ul>
+                <li>We never use your voice recordings to train AI</li>
+                <li>We never sell or share your data with third parties</li>
+                <li>All data is encrypted and securely stored</li>
+                <li>You can export or delete your data at any time</li>
+            </ul>
+
+            <h2>9. Service Availability</h2>
+            <ul>
+                <li>We strive for 99.9% uptime but do not guarantee uninterrupted service</li>
+                <li>Scheduled maintenance will be announced in advance</li>
+                <li>We are not liable for service interruptions</li>
+                <li>Emergency maintenance may occur without notice</li>
+            </ul>
+
+            <h2>10. Limitation of Liability</h2>
+            <p>TO THE MAXIMUM EXTENT PERMITTED BY LAW:</p>
+            <ul>
+                <li>The Service is provided "as is" without warranties</li>
+                <li>We are not liable for indirect, incidental, or consequential damages</li>
+                <li>Our total liability is limited to the amount you paid in the last 12 months</li>
+                <li>We are not responsible for content created by users</li>
+                <li>We are not liable for losses from account hacking or unauthorized access</li>
+            </ul>
+
+            <h2>11. Indemnification</h2>
+            <p>You agree to indemnify and hold us harmless from claims, damages, and expenses (including legal fees) arising from:</p>
+            <ul>
+                <li>Your violation of these Terms</li>
+                <li>Your violation of any law or third-party rights</li>
+                <li>Content you upload or share</li>
+            </ul>
+
+            <h2>12. Termination</h2>
+            
+            <h3>12.1 By You</h3>
+            <ul>
+                <li>Cancel your subscription anytime from Account Settings</li>
+                <li>Delete your account and all data anytime</li>
+                <li>Deletion is permanent and cannot be undone</li>
+            </ul>
+
+            <h3>12.2 By Us</h3>
+            <ul>
+                <li>We may suspend or terminate accounts that violate these Terms</li>
+                <li>We may discontinue the Service with 30 days' notice</li>
+                <li>Terminated accounts are not eligible for refunds</li>
+            </ul>
+
+            <h2>13. Changes to Terms</h2>
+            <ul>
+                <li>We may update these Terms from time to time</li>
+                <li>Significant changes will be announced via email</li>
+                <li>Continued use after changes constitutes acceptance</li>
+                <li>If you disagree with changes, cancel your subscription</li>
+            </ul>
+
+            <h2>14. Dispute Resolution</h2>
+            
+            <h3>14.1 Informal Resolution</h3>
+            <ul>
+                <li>Contact us first at support@voicesyoukeep.com</li>
+                <li>We will work in good faith to resolve disputes</li>
+            </ul>
+
+            <h3>14.2 Arbitration</h3>
+            <ul>
+                <li>Disputes will be resolved through binding arbitration</li>
+                <li>You waive the right to a jury trial</li>
+                <li>You waive the right to participate in class actions</li>
+                <li>Arbitration conducted under American Arbitration Association rules</li>
+            </ul>
+
+            <h2>15. Governing Law</h2>
+            <p>These Terms are governed by the laws of the State of Delaware, United States, without regard to conflict of law principles.</p>
+
+            <h2>16. Severability</h2>
+            <p>If any provision of these Terms is found to be unenforceable, the remaining provisions will remain in full effect.</p>
+
+            <h2>17. Contact Information</h2>
+            <p>For questions about these Terms:</p>
+            <ul>
+                <li><strong>Email:</strong> legal@voicesyoukeep.com</li>
+                <li><strong>Support:</strong> support@voicesyoukeep.com</li>
+                <li><strong>Address:</strong> Voices You Keep™️, 123 Memory Lane, Suite 100, Wilmington, DE 19801</li>
+            </ul>
+
+            <div class="privacy-banner" style="margin-top: 4rem;">
+                <i class="fas fa-handshake"></i>
+                <strong>Our Commitment:</strong> These Terms are designed to be fair and transparent. We're here to help preserve your memories, not to confuse you with legal jargon. If you have questions, just ask.
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Voices You Keep™️</h4>
+                <p style="color: var(--text-gray); margin-top: 1rem;">
+                    Preserve the voices that matter most. Create beautiful, animated greeting cards with personalized voice messages.
+                </p>
+                <div style="margin-top: 1.5rem;">
+                    <i class="fas fa-shield-alt" style="color: var(--accent-gold);"></i>
+                    <span style="color: var(--text-gray); margin-left: 0.5rem;">Privacy Guaranteed</span>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#/how-it-works" onclick="navigate('how-it-works')">How It Works</a></li>
+                    <li><a href="#/pricing" onclick="navigate('pricing')">Pricing</a></li>
+                    <li><a href="#/signup" onclick="navigate('signup')">Get Started</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#/privacy" onclick="navigate('privacy')">Privacy Policy</a></li>
+                    <li><a href="#/terms" onclick="navigate('terms')">Terms of Service</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="mailto:support@voicesyoukeep.com">support@voicesyoukeep.com</a></li>
+                    <li><a href="mailto:privacy@voicesyoukeep.com">privacy@voicesyoukeep.com</a></li>
+                    <li><a href="mailto:legal@voicesyoukeep.com">legal@voicesyoukeep.com</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Voices You Keep™️. All rights reserved.</p>
+            <p style="margin-top: 0.5rem; font-size: 0.875rem;">
+                <i class="fas fa-shield-alt"></i> We never use your voice recordings to train AI or share your data with third parties.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation System
+        const pages = ['home', 'how-it-works', 'pricing', 'login', 'signup', 'privacy', 'terms'];
+        
+        function navigate(page) {
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Hide all pages
+            pages.forEach(p => {
+                const pageElement = document.getElementById(p + '-page');
+                if (pageElement) {
+                    pageElement.classList.remove('active');
+                }
+            });
+            
+            // Show target page
+            const targetPage = document.getElementById(page + '-page');
+            if (targetPage) {
+                setTimeout(() => {
+                    targetPage.classList.add('active');
+                }, 100);
+            }
+            
+            // Update URL hash
+            window.location.hash = '/' + page;
+            
+            // Update active nav link
+            updateActiveNav(page);
+            
+            // Close mobile menu
+            const navLinks = document.getElementById('navLinks');
+            const hamburger = document.querySelector('.hamburger');
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('active');
+        }
+        
+        function updateActiveNav(currentPage) {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === '#/' + currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+        
+        // Handle browser back/forward
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.slice(2) || 'home';
+            navigate(hash);
+        });
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.slice(2) || 'home';
+            navigate(hash);
+        });
+        
+        // Mobile menu toggle
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const hamburger = document.querySelector('.hamburger');
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        }
+        
+        // Form handlers (mock implementations)
+        function handleLogin(event) {
+            event.preventDefault();
+            alert('Login functionality will be connected to the backend. For now, this is a demo.');
+            return false;
+        }
+        
+        function handleSignup(event) {
+            event.preventDefault();
+            alert('Signup functionality will be connected to the backend. Your subscription tier will be selected on the next page.');
+            return false;
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const navLinks = document.getElementById('navLinks');
+            const hamburger = document.querySelector('.hamburger');
+            const nav = document.querySelector('nav');
+            
+            if (!nav.contains(e.target) && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
