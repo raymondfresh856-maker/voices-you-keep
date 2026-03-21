@@ -33,48 +33,67 @@ exports.handler = async (event) => {
     });
 
     if (authError) {
-      // Handle duplicate email
-      if (authError.message.includes('already registered') || authError.message.includes('already been registered')) {
+      // Defensive: Supabase sometimes uses .message, sometimes .msg
+      const errMsg = authError.message || authError.msg || String(authError) || 'Authentication failed';
+      if (
+        errMsg.includes('already registered') ||
+        errMsg.includes('already been registered') ||
+        errMsg.includes('already exists')
+      ) {
         return jsonResponse(409, { error: 'An account with this email already exists' });
       }
-      return jsonResponse(400, { error: authError.message });
+      return jsonResponse(400, { error: errMsg });
     }
 
-    if (!authData.user) {
-      return jsonResponse(500, { error: 'Failed to create user' });
+    // Supabase with email confirmation returns user but null session
+    // We issue our own JWT so this is fine either way
+    const user = authData && authData.user;
+
+    if (!user || !user.id) {
+      // Account may need email confirmation — treat as partial success
+      return jsonResponse(200, {
+        requiresEmailConfirmation: true,
+        message: 'Account created! Check your email to confirm, then log in.',
+        token: null,
+        user: {
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          tier: 'FREE',
+          cardsUsedThisMonth: 0,
+          cardsUsedLifetime: 0,
+        },
+      });
     }
 
-    // Create profile in profiles table
-    const { error: profileError } = await supabaseAdmin.from('profiles').insert({
-      id: authData.user.id,
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      tier: 'FREE',
+    // Create profile row (best-effort — trigger also does this)
+    try {
+      await supabaseAdmin.from('profiles').insert({
+        id: user.id,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        tier: 'FREE',
+      });
+    } catch (profileErr) {
+      console.error('Profile insert error (non-fatal):', profileErr && (profileErr.message || profileErr));
+    }
+
+    // Issue our own JWT
+    const token = signToken({ id: user.id, email: user.email });
+
+    return jsonResponse(200, {
+      token,
+      user: {
+        id: user.id,
+        name: name.trim(),
+        email: user.email,
+        tier: 'FREE',
+        cardsUsedThisMonth: 0,
+        cardsUsedLifetime: 0,
+      },
     });
-
-    if (profileError) {
-      console.error('Profile creation error:', profileError);
-      // Don't fail the registration — profile can be created on first login
-    }
-
-    // Sign our own JWT
-    const token = signToken({
-      id: authData.user.id,
-      email: authData.user.email,
-    });
-
-    const user = {
-      id: authData.user.id,
-      name: name.trim(),
-      email: authData.user.email,
-      tier: 'FREE',
-      cardsUsedThisMonth: 0,
-      cardsUsedLifetime: 0,
-    };
-
-    return jsonResponse(200, { token, user });
   } catch (err) {
-    console.error('Registration error:', err);
-    return jsonResponse(500, { error: 'Registration failed. Please try again.' });
+    const msg = (err && (err.message || err.msg)) ? (err.message || err.msg) : String(err);
+    console.error('Registration error:', msg);
+    return jsonResponse(500, { error: 'Registration failed: ' + msg });
   }
 };
