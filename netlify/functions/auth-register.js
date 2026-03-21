@@ -75,6 +75,6 @@ exports.handler = async (event) => {
     return jsonResponse(200, { token, user });
   } catch (err) {
     console.error('Registration error:', err);
-    return jsonResponse(500, { error: `CAUGHT_v3: ${String(err)}`, type: typeof err });
+    return jsonResponse(500, { error: 'Registration failed. Please try again.' });
   }
 };
