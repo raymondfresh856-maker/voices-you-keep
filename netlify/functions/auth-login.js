@@ -37,27 +37,15 @@ exports.handler = async (event) => {
       .eq('id', authData.user.id)
       .single();
 
-    // Reset monthly card count if needed
-    let tier = 'FREE';
+    // Real schema: id, email, display_name, tier (no usage counters)
+    let tier = 'free';
     let cardsUsedThisMonth = 0;
     let cardsUsedLifetime = 0;
-    let name = authData.user.user_metadata?.name || 'User';
+    let name = authData.user.user_metadata?.name || authData.user.email;
 
     if (profile && !profileError) {
-      tier = profile.tier;
-      cardsUsedLifetime = profile.cards_used_lifetime;
-      name = profile.name;
-
-      // Check if monthly reset is needed
-      if (new Date(profile.month_reset_at) <= new Date()) {
-        cardsUsedThisMonth = 0;
-        await supabaseAdmin.from('profiles').update({
-          cards_used_this_month: 0,
-          month_reset_at: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
-        }).eq('id', authData.user.id);
-      } else {
-        cardsUsedThisMonth = profile.cards_used_this_month;
-      }
+      tier = profile.tier || 'free';
+      name = profile.display_name || profile.email;
     }
 
     // Sign JWT

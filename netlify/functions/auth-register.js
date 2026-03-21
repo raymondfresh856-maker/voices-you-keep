@@ -65,21 +65,16 @@ exports.handler = async (event) => {
       });
     }
 
-    // Create profile row — use upsert so re-registration doesn't fail
-    const nextMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString();
+    // Create profile row — actual schema: id, email, display_name, tier
     const { error: profileError } = await supabaseAdmin.from('profiles').upsert({
       id: user.id,
-      name: name.trim(),
       email: email.trim().toLowerCase(),
-      tier: 'FREE',
-      cards_used_this_month: 0,
-      cards_used_lifetime: 0,
-      month_reset_at: nextMonth,
+      display_name: name.trim(),
+      tier: 'free',
     }, { onConflict: 'id' });
 
     if (profileError) {
       console.error('Profile upsert error:', profileError.message || JSON.stringify(profileError));
-      // Non-fatal: user can still log in but auth/me will fail until profile exists
     }
 
     // Issue our own JWT
@@ -91,7 +86,7 @@ exports.handler = async (event) => {
         id: user.id,
         name: name.trim(),
         email: user.email,
-        tier: 'FREE',
+        tier: 'free',
         cardsUsedThisMonth: 0,
         cardsUsedLifetime: 0,
       },
