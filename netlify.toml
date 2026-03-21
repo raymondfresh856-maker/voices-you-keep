@@ -1,0 +1,58 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# API redirects — proxy /api/* to Netlify Functions
+[[redirects]]
+  from = "/api/auth/login"
+  to = "/.netlify/functions/auth-login"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/register"
+  to = "/.netlify/functions/auth-register"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/me"
+  to = "/.netlify/functions/auth-me"
+  status = 200
+
+[[redirects]]
+  from = "/api/cards/themes/*"
+  to = "/.netlify/functions/cards-themes"
+  status = 200
+
+[[redirects]]
+  from = "/api/cards/:id/audio"
+  to = "/.netlify/functions/cards-audio"
+  status = 200
+
+[[redirects]]
+  from = "/api/cards/:id/send"
+  to = "/.netlify/functions/cards-send"
+  status = 200
+
+[[redirects]]
+  from = "/api/cards"
+  to = "/.netlify/functions/cards-list"
+  status = 200
+
+[[redirects]]
+  from = "/api/cards/create"
+  to = "/.netlify/functions/cards-create"
+  status = 200
+
+[[redirects]]
+  from = "/api/payments/create-checkout"
+  to = "/.netlify/functions/payments-checkout"
+  status = 200
+
+# SPA fallback — serve index.html for all unmatched routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

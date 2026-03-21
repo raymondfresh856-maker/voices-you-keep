@@ -557,7 +557,7 @@
 
     <script>
         // Configuration
-        const API_URL = 'http://localhost:3001/api';
+        const API_URL = '/api';
         let currentUser = null;
         let selectedTheme = null;
         let audioBlob = null;
@@ -786,7 +786,7 @@
                 const token = localStorage.getItem('token');
                 
                 // Create card
-                const cardResponse = await fetch(`${API_URL}/cards`, {
+                const cardResponse = await fetch(`${API_URL}/cards/create`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -815,15 +815,22 @@
 
                 currentCard = cardData.card;
 
-                // Upload audio
-                const formData = new FormData();
-                formData.append('audio', audioBlob, 'recording.webm');
-                formData.append('duration', 60);
+                // Upload audio as base64 JSON (Netlify Functions don't support multipart)
+                const arrayBuffer = await audioBlob.arrayBuffer();
+                const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 
                 const audioResponse = await fetch(`${API_URL}/cards/${currentCard.id}/audio`, {
                     method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` },
-                    body: formData
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        audio: base64Audio,
+                        mimeType: audioBlob.type || 'audio/webm',
+                        duration: 60,
+                        fileName: 'recording.webm'
+                    })
                 });
 
                 if (!audioResponse.ok) {

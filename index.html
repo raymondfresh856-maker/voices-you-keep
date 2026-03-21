@@ -519,6 +519,141 @@
             color: var(--text-gray);
         }
 
+        /* Trust Badges */
+        .trust-badges {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+            text-align: center;
+        }
+
+        .trust-badge {
+            padding: 2rem 1.5rem;
+            background: rgba(76, 29, 149, 0.15);
+            border: 1px solid rgba(107, 33, 168, 0.25);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .trust-badge:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-4px);
+        }
+
+        .trust-badge i {
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .trust-badge h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .trust-badge p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            max-width: 800px;
+            margin: 4rem auto;
+        }
+
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(107, 33, 168, 0.2);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .faq-question {
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.05rem;
+            user-select: none;
+        }
+
+        .faq-question i {
+            color: var(--accent-gold);
+            transition: transform 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .faq-item.open .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 1.5rem;
+            color: var(--text-gray);
+            line-height: 1.7;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+            padding: 0 1.5rem 1.25rem;
+        }
+
+        /* Auth form messages */
+        .auth-message {
+            padding: 0.875rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .auth-message.error {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #FCA5A5;
+            display: block;
+        }
+
+        .auth-message.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6EE7B7;
+            display: block;
+        }
+
+        .btn-loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        /* No credit card badge */
+        .no-cc-badge {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+        }
+
+        .no-cc-badge i {
+            color: #10B981;
+            margin-right: 0.25rem;
+        }
+
         /* Footer */
         footer {
             background: rgba(15, 10, 31, 0.95);
@@ -628,16 +763,41 @@
     <!-- Home Page -->
     <div id="home-page" class="page active">
         <div class="hero">
-            <h1>Preserve Voices That Matter</h1>
-            <p>Send personalized voice message greeting cards with beautiful animations. Create lasting memories that live forever.</p>
+            <h1>Before Their Voice Fades, Preserve It Forever</h1>
+            <p>Send personalized voice message greeting cards with beautiful animations. Record once — the people you love can replay it for a lifetime.</p>
             <button class="cta-button" onclick="navigate('signup')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
-                Create Your First Card <i class="fas fa-arrow-right"></i>
+                Preserve a Voice Now — It's Free <i class="fas fa-arrow-right"></i>
             </button>
+            <p class="no-cc-badge" style="margin-top: 1rem;"><i class="fas fa-check-circle"></i> No credit card required to start</p>
         </div>
 
         <div class="privacy-banner">
             <i class="fas fa-shield-alt"></i>
             <strong>Your Privacy Guaranteed:</strong> We never share, sell, or use your voice recordings to train AI. Your memories are yours alone.
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="trust-badges">
+            <div class="trust-badge">
+                <i class="fas fa-lock"></i>
+                <h4>AES-256 Encryption</h4>
+                <p>Bank-level encryption protects every voice recording in transit and at rest.</p>
+            </div>
+            <div class="trust-badge">
+                <i class="fas fa-user-shield"></i>
+                <h4>Zero Data Selling</h4>
+                <p>Your recordings are never sold, shared, or used to train AI models. Period.</p>
+            </div>
+            <div class="trust-badge">
+                <i class="fas fa-undo-alt"></i>
+                <h4>7-Day Money Back</h4>
+                <p>Not satisfied? Get a full refund within 7 days, no questions asked.</p>
+            </div>
+            <div class="trust-badge">
+                <i class="fas fa-server"></i>
+                <h4>SOC 2 Certified</h4>
+                <p>Data stored in certified data centers with regular third-party audits.</p>
+            </div>
         </div>
 
         <h2 style="text-align: center; font-size: 3rem; margin: 4rem 0 2rem;">Why Choose Voices You Keep™️</h2>
@@ -681,10 +841,12 @@
         </div>
 
         <div style="text-align: center; margin: 6rem 0;">
-            <h2 style="font-size: 3rem; margin-bottom: 2rem;">Ready to Get Started?</h2>
-            <button class="cta-button" onclick="navigate('pricing')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
-                See Our Plans <i class="fas fa-arrow-right"></i>
+            <h2 style="font-size: 3rem; margin-bottom: 1rem;">Every Day You Wait Is a Voice You Might Lose</h2>
+            <p style="color: var(--text-gray); max-width: 600px; margin: 0 auto 2rem; font-size: 1.1rem;">Voices change. People move on. Don't let a moment slip away that you can never get back.</p>
+            <button class="cta-button" onclick="navigate('signup')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+                Start Preserving Voices — Free <i class="fas fa-arrow-right"></i>
             </button>
+            <p class="no-cc-badge" style="margin-top: 1rem;"><i class="fas fa-check-circle"></i> Create up to 3 cards free, forever</p>
         </div>
     </div>
 
@@ -755,10 +917,12 @@
         </div>
 
         <div style="text-align: center; margin: 6rem 0;">
-            <h2 style="font-size: 3rem; margin-bottom: 2rem;">Ready to Create Your First Card?</h2>
+            <h2 style="font-size: 3rem; margin-bottom: 1rem;">It Takes 2 Minutes. The Memory Lasts Forever.</h2>
+            <p style="color: var(--text-gray); max-width: 500px; margin: 0 auto 2rem;">Record, customize, and send — that's it. Your recipient gets a beautiful interactive card they can replay anytime.</p>
             <button class="cta-button" onclick="navigate('signup')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
-                Get Started Free <i class="fas fa-arrow-right"></i>
+                Create Your First Card Free <i class="fas fa-arrow-right"></i>
             </button>
+            <p class="no-cc-badge" style="margin-top: 1rem;"><i class="fas fa-check-circle"></i> No credit card required</p>
         </div>
     </div>
 
@@ -793,6 +957,7 @@
                     <li class="locked"><i class="fas fa-lock"></i> No background music</li>
                 </ul>
                 <button class="cta-button" onclick="navigate('signup')" style="width: 100%; margin-top: 1rem;">Get Started Free</button>
+                <p class="no-cc-badge"><i class="fas fa-check-circle"></i> No credit card required</p>
             </div>
 
             <!-- Keeper Tier -->
@@ -843,9 +1008,93 @@
             <p style="color: var(--text-gray);">Voice Vault is our exclusive Legacy feature that lets you preserve precious voice recordings of loved ones forever. Upload voicemails, recordings, or videos along with photos to create a digital memorial. Perfect for preserving the voices of family members, capturing children's voices as they grow, or honoring those who have passed away. Your voice memories are encrypted and stored safely, accessible anytime, anywhere.</p>
         </div>
 
-        <div style="text-align: center; margin: 6rem 0;">
-            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Questions? We're Here to Help</h2>
-            <p style="color: var(--text-gray); margin-bottom: 2rem;">Contact us at <a href="mailto:support@voicesyoukeep.com" style="color: var(--accent-gold);">support@voicesyoukeep.com</a></p>
+        <!-- FAQ Section -->
+        <div style="text-align: center; margin: 6rem 0 2rem;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Frequently Asked Questions</h2>
+            <p style="color: var(--text-gray);">Everything you need to know before you start</p>
+        </div>
+
+        <div class="faq-section">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    How long are voice recordings stored?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Your voice recordings are stored as long as your account is active. For free accounts, recordings persist indefinitely. For paid tiers, your recordings and cards remain available for as long as your subscription is active. Voice Vault (Legacy tier) recordings are designed to last generations — they persist until you explicitly delete them.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Will my voice recordings be used to train AI?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Absolutely not. We have a strict, legally binding commitment: your voice recordings will never be used to train AI, machine learning models, or any algorithmic systems. They are encrypted, stored securely, and accessed only when you or your recipient plays the card. This is core to our mission.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Can I cancel my subscription anytime?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Yes. You can cancel anytime from your account settings. Your subscription remains active until the end of the current billing period. There are no cancellation fees, no long-term contracts, and no hidden charges. Plus, all new paid subscriptions come with a 7-day money-back guarantee.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Does my recipient need an account to open a card?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    No. Recipients receive a unique link (via email, text, or QR code) that opens the card directly in their browser. No app download, no account creation, no friction. The card works on any device — desktop, phone, or tablet.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    What audio formats are supported?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    You can record directly in your browser or upload MP3, WAV, M4A, OGG, and WebM files up to 50MB. Our built-in recorder captures high-quality audio with real-time waveform visualization so you can see and hear exactly what you're recording.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    What is Voice Vault?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    Voice Vault is an exclusive Legacy-tier feature for preserving precious voice recordings permanently. Upload voicemails, recordings, or videos alongside photos to create a digital memorial that lasts generations. It's designed for preserving the voices of loved ones, capturing children's voices as they grow, or honoring those who have passed away.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    What happens to my cards if I downgrade?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    All previously sent cards remain active and accessible to recipients regardless of your current plan. You retain access to view your card history. You simply won't be able to create new cards beyond your new tier's limits until you upgrade again.
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 4rem 0 2rem;">
+            <button class="cta-button" onclick="navigate('signup')" style="font-size: 1.1rem; padding: 1rem 2.5rem;">
+                Start Preserving Voices Now <i class="fas fa-arrow-right"></i>
+            </button>
+            <p class="no-cc-badge" style="margin-top: 1rem;"><i class="fas fa-check-circle"></i> Free plan available — no credit card needed</p>
+        </div>
+
+        <div style="text-align: center; margin: 4rem 0 6rem;">
+            <p style="color: var(--text-gray);">Still have questions? Contact us at <a href="mailto:support@voicesyoukeep.com" style="color: var(--accent-gold);">support@voicesyoukeep.com</a></p>
         </div>
     </div>
 
@@ -853,34 +1102,27 @@
     <div id="login-page" class="page">
         <div class="auth-container">
             <h2>Welcome Back</h2>
-            
-            <div class="social-login">
-                <button class="social-btn">
-                    <i class="fab fa-google"></i> Google
-                </button>
-                <button class="social-btn">
-                    <i class="fab fa-apple"></i> Apple
-                </button>
-            </div>
 
-            <div class="divider">OR</div>
+            <div id="loginMessage" class="auth-message"></div>
 
-            <form onsubmit="handleLogin(event)">
+            <form onsubmit="handleLogin(event)" id="loginForm">
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" placeholder="you@example.com" required>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" placeholder="Enter your password" required>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
                 </div>
 
-                <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Log In</button>
+                <button type="submit" class="cta-button" id="loginBtn" style="width: 100%; margin-top: 1rem;">
+                    Log In <i class="fas fa-arrow-right"></i>
+                </button>
             </form>
 
             <div class="auth-link">
-                Don't have an account? <a href="#/signup" onclick="navigate('signup')">Sign up</a>
+                Don't have an account? <a href="#/signup" onclick="navigate('signup')">Sign up free</a>
             </div>
         </div>
 
@@ -893,37 +1135,32 @@
     <!-- Signup Page -->
     <div id="signup-page" class="page">
         <div class="auth-container">
-            <h2>Create Your Account</h2>
-            
-            <div class="social-login">
-                <button class="social-btn">
-                    <i class="fab fa-google"></i> Google
-                </button>
-                <button class="social-btn">
-                    <i class="fab fa-apple"></i> Apple
-                </button>
-            </div>
+            <h2>Start Preserving Voices Today</h2>
 
-            <div class="divider">OR</div>
+            <div id="signupMessage" class="auth-message"></div>
 
-            <form onsubmit="handleSignup(event)">
+            <form onsubmit="handleSignup(event)" id="signupForm">
                 <div class="form-group">
                     <label>Full Name</label>
-                    <input type="text" placeholder="John Doe" required>
+                    <input type="text" id="signupName" placeholder="Your name" required autocomplete="name">
                 </div>
 
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" placeholder="you@example.com" required>
+                    <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" placeholder="At least 8 characters" required minlength="8">
+                    <input type="password" id="signupPassword" placeholder="At least 8 characters" required minlength="8" autocomplete="new-password">
                 </div>
 
-                <button type="submit" class="cta-button" style="width: 100%; margin-top: 1rem;">Create Account</button>
+                <button type="submit" class="cta-button" id="signupBtn" style="width: 100%; margin-top: 1rem; background: linear-gradient(135deg, var(--accent-gold), #F97316);">
+                    Create Free Account <i class="fas fa-arrow-right"></i>
+                </button>
             </form>
+
+            <p class="no-cc-badge" style="margin-top: 1rem;"><i class="fas fa-check-circle"></i> No credit card required — get 3 free cards</p>
 
             <div class="auth-link">
                 Already have an account? <a href="#/login" onclick="navigate('login')">Log in</a>
@@ -1344,93 +1581,205 @@
     </footer>
 
     <script>
-        // Navigation System
+        // ============================================================
+        // Configuration
+        // ============================================================
+        const API_BASE = '/api';
         const pages = ['home', 'how-it-works', 'pricing', 'login', 'signup', 'privacy', 'terms'];
-        
+
+        // ============================================================
+        // Navigation System
+        // ============================================================
         function navigate(page) {
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Hide all pages
+
             pages.forEach(p => {
-                const pageElement = document.getElementById(p + '-page');
-                if (pageElement) {
-                    pageElement.classList.remove('active');
-                }
+                const el = document.getElementById(p + '-page');
+                if (el) el.classList.remove('active');
             });
-            
-            // Show target page
-            const targetPage = document.getElementById(page + '-page');
-            if (targetPage) {
-                setTimeout(() => {
-                    targetPage.classList.add('active');
-                }, 100);
+
+            const target = document.getElementById(page + '-page');
+            if (target) {
+                setTimeout(() => target.classList.add('active'), 100);
             }
-            
-            // Update URL hash
+
             window.location.hash = '/' + page;
-            
-            // Update active nav link
             updateActiveNav(page);
-            
-            // Close mobile menu
+
             const navLinks = document.getElementById('navLinks');
             const hamburger = document.querySelector('.hamburger');
             navLinks.classList.remove('active');
             hamburger.classList.remove('active');
         }
-        
+
         function updateActiveNav(currentPage) {
-            const navLinks = document.querySelectorAll('.nav-link');
-            navLinks.forEach(link => {
+            document.querySelectorAll('.nav-link').forEach(link => {
                 const href = link.getAttribute('href');
-                if (href === '#/' + currentPage) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
+                link.classList.toggle('active', href === '#/' + currentPage);
             });
         }
-        
-        // Handle browser back/forward
+
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.slice(2) || 'home';
             navigate(hash);
         });
-        
-        // Initialize on page load
+
         window.addEventListener('DOMContentLoaded', () => {
+            // If user is already logged in, update nav
+            const token = localStorage.getItem('token');
+            if (token) {
+                updateNavForLoggedInUser();
+            }
             const hash = window.location.hash.slice(2) || 'home';
             navigate(hash);
         });
-        
-        // Mobile menu toggle
+
         function toggleMenu() {
             const navLinks = document.getElementById('navLinks');
             const hamburger = document.querySelector('.hamburger');
             navLinks.classList.toggle('active');
             hamburger.classList.toggle('active');
         }
-        
-        // Form handlers (mock implementations)
-        function handleLogin(event) {
-            event.preventDefault();
-            alert('Login functionality will be connected to the backend. For now, this is a demo.');
-            return false;
+
+        function updateNavForLoggedInUser() {
+            // Replace Login/Get Started with Dashboard/Logout
+            const loginLink = document.querySelector('a[href="#/login"]');
+            const signupLink = document.querySelector('a[href="#/signup"]');
+            if (loginLink) {
+                loginLink.textContent = 'Dashboard';
+                loginLink.setAttribute('href', '/card-creator.html');
+                loginLink.setAttribute('onclick', 'window.location.href="/card-creator.html"');
+            }
+            if (signupLink) {
+                signupLink.textContent = 'Create Card';
+                signupLink.setAttribute('href', '/card-creator.html');
+                signupLink.setAttribute('onclick', 'window.location.href="/card-creator.html"');
+            }
         }
-        
-        function handleSignup(event) {
+
+        // ============================================================
+        // Auth: Login
+        // ============================================================
+        async function handleLogin(event) {
             event.preventDefault();
-            alert('Signup functionality will be connected to the backend. Your subscription tier will be selected on the next page.');
-            return false;
+            const btn = document.getElementById('loginBtn');
+            const msgEl = document.getElementById('loginMessage');
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            msgEl.className = 'auth-message';
+            msgEl.textContent = '';
+            btn.classList.add('btn-loading');
+            btn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;"></span> Signing in...';
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+                const data = await res.json();
+
+                if (res.ok && data.token) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    msgEl.className = 'auth-message success';
+                    msgEl.textContent = '✓ Login successful! Redirecting...';
+                    setTimeout(() => { window.location.href = '/card-creator.html'; }, 1200);
+                } else {
+                    msgEl.className = 'auth-message error';
+                    msgEl.textContent = data.error || 'Login failed. Please check your credentials.';
+                    resetLoginBtn();
+                }
+            } catch (err) {
+                msgEl.className = 'auth-message error';
+                msgEl.textContent = 'Cannot connect to server. Please try again later.';
+                resetLoginBtn();
+            }
         }
-        
-        // Close mobile menu when clicking outside
+
+        function resetLoginBtn() {
+            const btn = document.getElementById('loginBtn');
+            btn.classList.remove('btn-loading');
+            btn.innerHTML = 'Log In <i class="fas fa-arrow-right"></i>';
+        }
+
+        // ============================================================
+        // Auth: Signup
+        // ============================================================
+        async function handleSignup(event) {
+            event.preventDefault();
+            const btn = document.getElementById('signupBtn');
+            const msgEl = document.getElementById('signupMessage');
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+
+            // Client-side validation
+            if (!name) { showSignupError('Please enter your name.'); return; }
+            if (!email.includes('@')) { showSignupError('Please enter a valid email.'); return; }
+            if (password.length < 8) { showSignupError('Password must be at least 8 characters.'); return; }
+
+            msgEl.className = 'auth-message';
+            msgEl.textContent = '';
+            btn.classList.add('btn-loading');
+            btn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;"></span> Creating account...';
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password }),
+                });
+                const data = await res.json();
+
+                if (res.ok && data.token) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    msgEl.className = 'auth-message success';
+                    msgEl.textContent = '✓ Account created! Redirecting to your first card...';
+                    setTimeout(() => { window.location.href = '/card-creator.html'; }, 1200);
+                } else {
+                    showSignupError(data.error || 'Signup failed. Please try again.');
+                    resetSignupBtn();
+                }
+            } catch (err) {
+                showSignupError('Cannot connect to server. Please try again later.');
+                resetSignupBtn();
+            }
+        }
+
+        function showSignupError(msg) {
+            const msgEl = document.getElementById('signupMessage');
+            msgEl.className = 'auth-message error';
+            msgEl.textContent = msg;
+        }
+
+        function resetSignupBtn() {
+            const btn = document.getElementById('signupBtn');
+            btn.classList.remove('btn-loading');
+            btn.innerHTML = 'Create Free Account <i class="fas fa-arrow-right"></i>';
+        }
+
+        // ============================================================
+        // FAQ Toggle
+        // ============================================================
+        function toggleFaq(el) {
+            const item = el.parentElement;
+            const wasOpen = item.classList.contains('open');
+            // Close all
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            // Open clicked if it wasn't open
+            if (!wasOpen) item.classList.add('open');
+        }
+
+        // ============================================================
+        // Close mobile menu on outside click
+        // ============================================================
         document.addEventListener('click', (e) => {
             const navLinks = document.getElementById('navLinks');
             const hamburger = document.querySelector('.hamburger');
             const nav = document.querySelector('nav');
-            
             if (!nav.contains(e.target) && navLinks.classList.contains('active')) {
                 navLinks.classList.remove('active');
                 hamburger.classList.remove('active');

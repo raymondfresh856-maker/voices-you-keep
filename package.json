@@ -1,0 +1,14 @@
+{
+  "name": "voices-you-keep",
+  "version": "1.0.0",
+  "description": "Voices You Keep - Preserve voices that matter with animated greeting cards",
+  "private": true,
+  "scripts": {
+    "build": "echo 'Static site — no build step required'"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "stripe": "^14.9.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
