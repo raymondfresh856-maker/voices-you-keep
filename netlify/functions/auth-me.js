@@ -19,7 +19,37 @@ exports.handler = async (event) => {
       .single();
 
     if (error || !profile) {
-      return jsonResponse(404, { error: 'Profile not found' });
+      // Profile missing — create it now so the user isn't permanently locked out
+      const nextMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString();
+      const { data: newProfile, error: upsertError } = await supabaseAdmin
+        .from('profiles')
+        .upsert({
+          id: auth.user.id,
+          name: auth.user.email,
+          email: auth.user.email,
+          tier: 'FREE',
+          cards_used_this_month: 0,
+          cards_used_lifetime: 0,
+          month_reset_at: nextMonth,
+        }, { onConflict: 'id' })
+        .select()
+        .single();
+
+      if (upsertError || !newProfile) {
+        console.error('Profile auto-create failed:', upsertError && (upsertError.message || JSON.stringify(upsertError)));
+        return jsonResponse(404, { error: 'Profile not found' });
+      }
+
+      return jsonResponse(200, {
+        user: {
+          id: newProfile.id,
+          name: newProfile.name,
+          email: newProfile.email,
+          tier: newProfile.tier,
+          cardsUsedThisMonth: 0,
+          cardsUsedLifetime: 0,
+        },
+      });
     }
 
     // Check monthly reset

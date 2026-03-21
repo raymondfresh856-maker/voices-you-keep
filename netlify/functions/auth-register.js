@@ -65,16 +65,21 @@ exports.handler = async (event) => {
       });
     }
 
-    // Create profile row (best-effort — trigger also does this)
-    try {
-      await supabaseAdmin.from('profiles').insert({
-        id: user.id,
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        tier: 'FREE',
-      });
-    } catch (profileErr) {
-      console.error('Profile insert error (non-fatal):', profileErr && (profileErr.message || profileErr));
+    // Create profile row — use upsert so re-registration doesn't fail
+    const nextMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString();
+    const { error: profileError } = await supabaseAdmin.from('profiles').upsert({
+      id: user.id,
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      tier: 'FREE',
+      cards_used_this_month: 0,
+      cards_used_lifetime: 0,
+      month_reset_at: nextMonth,
+    }, { onConflict: 'id' });
+
+    if (profileError) {
+      console.error('Profile upsert error:', profileError.message || JSON.stringify(profileError));
+      // Non-fatal: user can still log in but auth/me will fail until profile exists
     }
 
     // Issue our own JWT
