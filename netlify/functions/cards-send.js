@@ -52,14 +52,15 @@ exports.handler = async (event) => {
       return jsonResponse(500, { error: 'Failed to send card' });
     }
 
-    // Build share URL
+    // Build share URL — share_url column stores the path (/open/{id})
     const baseUrl = event.headers.origin || event.headers.referer?.replace(/\/$/, '') || 'https://voices-you-keep.netlify.app';
-    const shareUrl = `${baseUrl}/open/${card.share_token}`;
+    const sharePath = card.share_url || `/open/${card.id}`;
+    const shareUrl = `${baseUrl}${sharePath}`;
 
     return jsonResponse(200, {
       message: 'Card sent successfully',
       shareUrl,
-      shareToken: card.share_token,
+      shareToken: card.id,
     });
   } catch (err) {
     console.error('Send card error:', err);

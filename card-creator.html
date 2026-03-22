@@ -612,16 +612,19 @@
             document.getElementById('userTier').textContent = `${currentUser.tier} Tier`;
 
             const tierLimits = {
+                free: { cards: 1, text: 'You have 1 free card' },
                 FREE: { cards: 1, text: 'You have 1 free card' },
+                keeper: { cards: 10, text: `${currentUser.cardsUsedThisMonth || 0}/10 cards this month` },
                 KEEPER: { cards: 10, text: `${currentUser.cardsUsedThisMonth || 0}/10 cards this month` },
+                legacy: { cards: Infinity, text: 'Unlimited cards' },
                 LEGACY: { cards: Infinity, text: 'Unlimited cards' }
             };
 
-            const limit = tierLimits[currentUser.tier];
-            document.getElementById('cardUsage').textContent = limit.text;
+            const limit = tierLimits[currentUser.tier] || tierLimits.free;
+            document.getElementById('cardUsage').textContent = limit ? limit.text : '';
 
             // Show tier info on themes page
-            if (currentUser.tier === 'FREE') {
+            if (currentUser.tier === 'FREE' || currentUser.tier === 'free') {
                 const tierInfo = document.getElementById('tierInfo');
                 const tierText = document.getElementById('tierText');
                 tierInfo.style.display = 'flex';
@@ -915,8 +918,24 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(page + '-page').classList.add('active');
 
+            if (page === 'preview') {
+                updatePreview();
+            }
             if (page === 'dashboard') {
                 loadDashboard();
+            }
+        }
+
+        function updatePreview() {
+            if (!selectedTheme) return;
+            // Find the selected theme data from the rendered theme cards
+            const themeCard = document.querySelector(`.theme-card[onclick="selectTheme('${selectedTheme}')"]`);
+            if (themeCard) {
+                const preview = themeCard.querySelector('.theme-preview');
+                const emoji = preview ? preview.querySelector('span').textContent : '🎉';
+                const name = themeCard.querySelector('h3') ? themeCard.querySelector('h3').textContent : 'Voice Message';
+                document.getElementById('previewEmoji').textContent = emoji;
+                document.getElementById('previewTitle').textContent = name;
             }
         }
 

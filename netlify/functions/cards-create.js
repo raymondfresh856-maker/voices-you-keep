@@ -1,12 +1,5 @@
 const { getSupabaseAdmin, handleOptions, jsonResponse, authenticateRequest, parseBody } = require('./utils/supabase');
 
-// Tier limits
-const TIER_LIMITS = {
-  FREE: { monthlyCards: 3, isLifetime: true },
-  KEEPER: { monthlyCards: 10, isLifetime: false },
-  LEGACY: { monthlyCards: Infinity, isLifetime: false },
-};
-
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return handleOptions();
   if (event.httpMethod !== 'POST') {
@@ -27,7 +20,7 @@ exports.handler = async (event) => {
   try {
     const supabaseAdmin = getSupabaseAdmin();
 
-    // Get user profile
+    // Get user profile — actual schema: id, email, display_name, tier
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('*')
@@ -38,29 +31,8 @@ exports.handler = async (event) => {
       return jsonResponse(404, { error: 'User profile not found' });
     }
 
-    // Check monthly reset
-    let cardsUsed = profile.cards_used_this_month;
-    if (new Date(profile.month_reset_at) <= new Date()) {
-      cardsUsed = 0;
-      await supabaseAdmin.from('profiles').update({
-        cards_used_this_month: 0,
-        month_reset_at: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString(),
-      }).eq('id', auth.user.id);
-    }
-
-    // Check tier limits
-    const limit = TIER_LIMITS[profile.tier] || TIER_LIMITS.FREE;
-    const countToCheck = limit.isLifetime ? profile.cards_used_lifetime : cardsUsed;
-    const maxCards = limit.isLifetime ? limit.monthlyCards : limit.monthlyCards;
-
-    if (countToCheck >= maxCards) {
-      return jsonResponse(403, {
-        error: `You've reached your ${limit.isLifetime ? 'lifetime' : 'monthly'} card limit (${maxCards}). Upgrade to send more!`,
-        upgradeRequired: true,
-      });
-    }
-
-    // Create card
+    // Create card — actual schema: id, user_id, title, message, theme_id,
+    // recipient_name, recipient_email, status, share_url, sent_at, created_at
     const { data: card, error: cardError } = await supabaseAdmin
       .from('cards')
       .insert({
@@ -68,7 +40,6 @@ exports.handler = async (event) => {
         theme_id: themeId,
         title: title || 'Voice Message Card',
         message: message || '',
-        sender_name: senderName || profile.name,
         recipient_name: recipientName.trim(),
         recipient_email: recipientEmail ? recipientEmail.trim().toLowerCase() : null,
         status: 'draft',
@@ -77,16 +48,15 @@ exports.handler = async (event) => {
       .single();
 
     if (cardError) {
-      console.error('Card creation error:', cardError);
-      return jsonResponse(500, { error: 'Failed to create card' });
+      console.error('Card creation error:', cardError.message || JSON.stringify(cardError));
+      return jsonResponse(500, { error: 'Failed to create card: ' + (cardError.message || JSON.stringify(cardError)) });
     }
 
-    // Increment card counts
-    await supabaseAdmin.from('profiles').update({
-      cards_used_this_month: cardsUsed + 1,
-      cards_used_lifetime: profile.cards_used_lifetime + 1,
-      updated_at: new Date().toISOString(),
-    }).eq('id', auth.user.id);
+    // Set the share URL using the card's own ID
+    await supabaseAdmin
+      .from('cards')
+      .update({ share_url: `/open/${card.id}` })
+      .eq('id', card.id);
 
     return jsonResponse(201, {
       card: {
@@ -94,11 +64,11 @@ exports.handler = async (event) => {
         themeId: card.theme_id,
         title: card.title,
         message: card.message,
-        senderName: card.sender_name,
+        senderName: senderName || profile.display_name || profile.email,
         recipientName: card.recipient_name,
         recipientEmail: card.recipient_email,
         status: card.status,
-        shareToken: card.share_token,
+        shareToken: card.id,
         createdAt: card.created_at,
       },
     });
