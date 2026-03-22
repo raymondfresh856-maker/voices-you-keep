@@ -37,13 +37,12 @@ exports.handler = async (event) => {
       return jsonResponse(400, { error: 'Card has already been sent' });
     }
 
-    // Update card status to sent
+    // Update card status to sent — cards schema has no updated_at column
     const { error: updateError } = await supabaseAdmin
       .from('cards')
       .update({
         status: 'sent',
         sent_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
       })
       .eq('id', cardId);
 
