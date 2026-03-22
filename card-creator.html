@@ -818,16 +818,13 @@
 
                 currentCard = cardData.card;
 
-                // Upload audio as base64 JSON (Netlify Functions don't support multipart)
-                // Chunked conversion — spreading large Uint8Arrays directly hits the call stack limit
-                const arrayBuffer = await audioBlob.arrayBuffer();
-                const uint8Array = new Uint8Array(arrayBuffer);
-                let binary = '';
-                const chunkSize = 8192;
-                for (let i = 0; i < uint8Array.length; i += chunkSize) {
-                    binary += String.fromCharCode(...uint8Array.subarray(i, i + chunkSize));
-                }
-                const base64Audio = btoa(binary);
+                // Convert audio blob to base64 using FileReader — avoids call stack limits entirely
+                const base64Audio = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(audioBlob);
+                });
 
                 const audioResponse = await fetch(`${API_URL}/cards/${currentCard.id}/audio`, {
                     method: 'POST',
