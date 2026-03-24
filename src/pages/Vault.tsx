@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { UploadCloud, Play, Trash2, Mic, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { dbService, storageService, CardData } from '../services/backend';
+import { dbService, storageService } from '../services/backend';
+import type { CardData } from '../services/backend';
 
 const Vault = () => {
   const { user } = useAuth();
