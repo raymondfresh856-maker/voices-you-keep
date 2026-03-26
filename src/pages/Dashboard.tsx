@@ -106,7 +106,9 @@ const Dashboard = () => {
                   <strong>Current Plan: Plus</strong>
                   <span>$4.99/mo</span>
                 </div>
-                <button className="btn btn-primary" style={{marginTop: '1rem'}}>Manage Subscription in Stripe</button>
+                <a href={import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL || '#'} target="_blank" rel="noreferrer" className="btn btn-primary" style={{marginTop: '1rem', display: 'inline-block'}}>
+                  Manage Subscription in Stripe
+                </a>
               </div>
             </div>
           } />

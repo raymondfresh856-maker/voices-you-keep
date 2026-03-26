@@ -11,14 +11,16 @@ const CreateCard = () => {
   const [message, setMessage] = useState('Hope you have a wonderful day! 🎂');
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | undefined>(undefined);
+  const [recipientEmail, setRecipientEmail] = useState('');
+  const [deliveryMethod, setDeliveryMethod] = useState('manual');
   const [previewMode, setPreviewMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Free Tier constraints mock
-  const isFreeTier = true; 
+  // Free Tier constraints mock (Set to false so user can test the email feature)
+  const isFreeTier = false; 
 
   const handleRecordingComplete = (blob: Blob) => {
     const url = URL.createObjectURL(blob);
@@ -40,13 +42,30 @@ const CreateCard = () => {
         finalAudioUrl = await storageService.uploadAudio(audioBlob, `cards/${user.uid}_${Date.now()}.webm`);
       }
 
-      await dbService.saveCard({
+      const newCardId = await dbService.saveCard({
         userId: user.uid,
         occasion,
         message,
         audioUrl: finalAudioUrl,
         createdAt: Date.now()
       });
+      
+      if (deliveryMethod === 'email' && recipientEmail) {
+        try {
+          await fetch('/api/send-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              recipientEmail,
+              cardId: newCardId,
+              senderName: user.displayName || 'Someone',
+              occasion
+            })
+          });
+        } catch (err) {
+          console.warn("Failed to dispatch email API", err);
+        }
+      }
       
       alert("Card saved successfully!");
       navigate('/dashboard');
@@ -118,12 +137,25 @@ const CreateCard = () => {
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <input type="radio" name="delivery" defaultChecked /> Send Manually (Link)
+              <input type="radio" name="delivery" checked={deliveryMethod === 'manual'} onChange={() => setDeliveryMethod('manual')} /> 
+              Send Manually (Dashboard Link)
             </label>
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: isFreeTier ? 0.5 : 1 }}>
-              <input type="radio" name="delivery" disabled={isFreeTier} /> 
-              Schedule Email Delivery {isFreeTier && <span style={{ color: 'var(--color-warm)', fontSize: '0.8rem' }}>(Plus/Pro feature)</span>}
+              <input type="radio" name="delivery" disabled={isFreeTier} checked={deliveryMethod === 'email'} onChange={() => setDeliveryMethod('email')} /> 
+              Deliver via Email instantly {isFreeTier && <span style={{ color: 'var(--color-warm)', fontSize: '0.8rem' }}>(Plus/Pro feature)</span>}
             </label>
+            
+            {deliveryMethod === 'email' && (
+              <div style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+                <input 
+                  type="email" 
+                  placeholder="Recipient Email Address" 
+                  value={recipientEmail}
+                  onChange={e => setRecipientEmail(e.target.value)}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', background: 'var(--color-bg)', color: 'white', border: '1px solid var(--color-surface-light)' }} 
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

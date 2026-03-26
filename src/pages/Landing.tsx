@@ -84,7 +84,7 @@ const Landing = () => {
                 <li>Scheduled delivery via Email</li>
                 <li>Remove Watermark</li>
               </ul>
-              <Link to="/auth" className="btn btn-primary">Choose Plus</Link>
+              <a href={import.meta.env.VITE_STRIPE_PLUS_LINK || '/auth'} className="btn btn-primary">Choose Plus</a>
             </div>
 
             <div className="price-card glass-panel">
@@ -95,7 +95,7 @@ const Landing = () => {
                 <li><strong>The Voice Vault:</strong> Securely save older voicemails</li>
                 <li><strong>Photo Animation:</strong> Animate photos to recorded voices</li>
               </ul>
-              <Link to="/auth" className="btn btn-primary">Choose Pro</Link>
+              <a href={import.meta.env.VITE_STRIPE_PRO_LINK || '/auth'} className="btn btn-primary">Choose Pro</a>
             </div>
           </div>
         </section>
