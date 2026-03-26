@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { UploadCloud, Play, Trash2, Mic, Lock } from 'lucide-react';
+import { UploadCloud, Trash2, Mic, Lock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { dbService, storageService } from '../services/backend';
 import type { CardData } from '../services/backend';
@@ -17,7 +17,7 @@ const Vault = () => {
         setLoading(false);
       });
     } else {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 0);
     }
   }, [user]);
 
@@ -26,7 +26,7 @@ const Vault = () => {
     const file = e.target.files[0];
     try {
       const url = await storageService.uploadAudio(file, `vault/${user.uid}_${Date.now()}_${file.name}`);
-      const newCardId = await dbService.saveCard({
+      await dbService.saveCard({
         userId: user.uid,
         occasion: 'vault upload',
         message: file.name,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mic, Heart, Gift, Shield, Star, ShieldCheck } from 'lucide-react';
+import { Mic, Heart, Gift, ShieldCheck } from 'lucide-react';
 
 const Landing = () => {
   return (

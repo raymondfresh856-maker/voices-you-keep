@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import type { User } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -16,6 +15,7 @@ export const firebaseConfig = {
 
 export const IS_FIREBASE_ENABLED = !!firebaseConfig.apiKey;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let app, auth: any, db: any, storage: any;
 
 if (IS_FIREBASE_ENABLED) {
@@ -26,6 +26,7 @@ if (IS_FIREBASE_ENABLED) {
 }
 
 // --- Mock Global State ---
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mockCurrentUser: any = null;
 const MOCK_STORAGE_KEY = 'vyk_mock_db';
 const MOCK_AUTH_KEY = 'vyk_mock_auth';
@@ -34,6 +35,7 @@ function getMockDB() {
   const data = localStorage.getItem(MOCK_STORAGE_KEY);
   return data ? JSON.parse(data) : { cards: [], users: [] };
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function saveMockDB(db: any) {
   localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(db));
 }
@@ -42,7 +44,7 @@ function saveMockDB(db: any) {
 try {
   const savedUser = localStorage.getItem(MOCK_AUTH_KEY);
   if (savedUser) mockCurrentUser = JSON.parse(savedUser);
-} catch (e) {}
+} catch { /* ignore */ }
 
 // --- Auth API ---
 export const authService = {
@@ -78,7 +80,7 @@ export const authService = {
     mockCurrentUser = null;
     localStorage.removeItem(MOCK_AUTH_KEY);
   },
-  onAuthStateChanged(callback: (user: any) => void) {
+  onAuthStateChanged(callback: (user: any) => void) { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (IS_FIREBASE_ENABLED) {
       return onAuthStateChanged(auth, callback);
     }
@@ -121,7 +123,7 @@ export const dbService = {
       return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CardData));
     }
     const mdb = getMockDB();
-    return mdb.cards.filter((c: any) => c.userId === userId || c.userId === 'mock_uid_1');
+    return mdb.cards.filter((c: any) => c.userId === userId || c.userId === 'mock_uid_1'); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 };
 

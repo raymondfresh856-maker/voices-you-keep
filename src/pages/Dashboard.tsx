@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { Mic, Heart, Settings, PlusCircle, Calendar, Play } from 'lucide-react';
+import { Routes, Route, Link } from 'react-router-dom';
+import { Heart, Settings, PlusCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { dbService } from '../services/backend';
 import type { CardData } from '../services/backend';
@@ -20,7 +20,7 @@ const DashboardHome = () => {
         setLoading(false);
       });
     } else {
-      setLoading(false);
+      setTimeout(() => setLoading(false), 0);
     }
   }, [user]);
 
