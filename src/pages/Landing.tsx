@@ -33,7 +33,7 @@ const Landing = () => {
           <div className="feature-grid">
             <div className="feature-card glass-panel">
               <Gift size={32} color="var(--color-secondary)" />
-              <h3>Interactive Interactive Envelopes</h3>
+              <h3>Interactive Envelopes</h3>
               <p>Drag the card out to reveal themed particle explosions—confetti, candy canes, and more!</p>
             </div>
             <div className="feature-card glass-panel">
@@ -68,7 +68,7 @@ const Landing = () => {
                 <li>60 second voice recording limit</li>
                 <li>Limited dynamic templates</li>
                 <li>Manual sending</li>
-                <li>Voices You Keep™ Watermark</li>
+                <li>Voices You Keep&#8482; Watermark</li>
               </ul>
               <Link to="/auth" className="btn btn-outline">Current Plan</Link>
             </div>
@@ -84,7 +84,11 @@ const Landing = () => {
                 <li>Scheduled delivery via Email</li>
                 <li>Remove Watermark</li>
               </ul>
-              <a href={import.meta.env.VITE_STRIPE_PLUS_LINK || '/auth'} className="btn btn-primary">Choose Plus</a>
+              {import.meta.env.VITE_STRIPE_PLUS_LINK ? (
+                <a href={import.meta.env.VITE_STRIPE_PLUS_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Choose Plus</a>
+              ) : (
+                <Link to="/auth" className="btn btn-primary">Choose Plus</Link>
+              )}
             </div>
 
             <div className="price-card glass-panel">
@@ -95,14 +99,18 @@ const Landing = () => {
                 <li><strong>The Voice Vault:</strong> Securely save older voicemails</li>
                 <li><strong>Photo Animation:</strong> Animate photos to recorded voices</li>
               </ul>
-              <a href={import.meta.env.VITE_STRIPE_PRO_LINK || '/auth'} className="btn btn-primary">Choose Pro</a>
+              {import.meta.env.VITE_STRIPE_PRO_LINK ? (
+                <a href={import.meta.env.VITE_STRIPE_PRO_LINK} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Choose Pro</a>
+              ) : (
+                <Link to="/auth" className="btn btn-primary">Choose Pro</Link>
+              )}
             </div>
           </div>
         </section>
       </main>
 
       <footer className="footer">
-        <p>&copy; 2026 Voices You Keep™. All Rights Reserved.</p>
+        <p>&copy; 2026 Voices You Keep&#8482;. All Rights Reserved.</p>
         <p className="privacy-note">Privacy First: We never sell or train on your voice data.</p>
       </footer>
     </div>
