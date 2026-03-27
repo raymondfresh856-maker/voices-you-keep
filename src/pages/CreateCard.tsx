@@ -4,6 +4,7 @@ import VoiceRecorder from '../components/VoiceRecorder';
 import InteractiveEnvelope from '../components/InteractiveEnvelope';
 import { Send, Eye, CalendarClock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useSubscription } from '../contexts/SubscriptionContext';
 import { dbService, storageService } from '../services/backend';
 
 const CreateCard = () => {
@@ -17,10 +18,8 @@ const CreateCard = () => {
   const [isSaving, setIsSaving] = useState(false);
   
   const { user } = useAuth();
+  const { isFreeTier } = useSubscription();
   const navigate = useNavigate();
-
-  // Free Tier constraints mock (Set to false so user can test the email feature)
-  const isFreeTier = false; 
 
   const handleRecordingComplete = (blob: Blob) => {
     const url = URL.createObjectURL(blob);
@@ -30,7 +29,7 @@ const CreateCard = () => {
 
   const handleSend = async () => {
     if (!user) {
-      alert("Please sign in to save cards.");
+      alert('Please sign in to save cards.');
       navigate('/auth');
       return;
     }
@@ -63,15 +62,15 @@ const CreateCard = () => {
             })
           });
         } catch (err) {
-          console.warn("Failed to dispatch email API", err);
+          console.warn('Failed to dispatch email API', err);
         }
       }
       
-      alert("Card saved successfully!");
+      alert('Card saved successfully!');
       navigate('/dashboard');
     } catch (e) {
       console.error(e);
-      alert("Failed to save card.");
+      alert('Failed to save card.');
     } finally {
       setIsSaving(false);
     }
