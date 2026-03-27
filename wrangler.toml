@@ -1,0 +1,7 @@
+name = "voices-you-keep"
+compatibility_date = "2025-03-27"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
