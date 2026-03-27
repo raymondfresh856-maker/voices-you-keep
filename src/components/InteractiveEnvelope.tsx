@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 interface InteractiveEnvelopeProps {
-  occasion: string; // 'birthday', 'christmas', 'graduation', etc.
+  occasion: string;
   message: string;
-  audioBlobUrl?: string; // For auto-playing Voice
+  audioBlobUrl?: string;
 }
 
 const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, message, audioBlobUrl }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [particles, setParticles] = useState<{id: number, type: string, x: number, y: number, r: number, delay: number}[]>([]);
+  const [particles, setParticles] = useState<{id: number, type: string, x: number, y: number, r: number, delay: number, dx: number, dy: number}[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -21,19 +21,19 @@ const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, mes
     if (isOpen) return;
     setIsOpen(true);
     
-    // Play voice automatically when card is pulled out
     if (audioRef.current) {
-      audioRef.current.play().catch(e => console.error("Audio auto-play prevented:", e));
+      audioRef.current.play().catch(e => console.error('Audio auto-play prevented:', e));
     }
 
-    // Generate Particles
     const newParticles = Array.from({ length: 40 }).map((_, i) => ({
       id: i,
       type: occasion,
-      x: Math.random() * 100, // percentage
-      y: Math.random() * 100, // percentage
-      r: Math.random() * 360, // rotation
-      delay: Math.random() * 0.5 // animation delay
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      r: Math.random() * 360,
+      delay: Math.random() * 0.5,
+      dx: (Math.random() - 0.5) * 200,
+      dy: -(Math.random() * 250 + 100),
     }));
     setParticles(newParticles);
   };
@@ -41,7 +41,7 @@ const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, mes
   const getParticleContent = (type: string) => {
     switch(type.toLowerCase()) {
       case 'birthday': return '🎊';
-      case 'christmas': return '🍬'; // Candy cane approximation
+      case 'christmas': return '🍬';
       case 'graduation': return '🎓';
       case 'new years': return '✨';
       default: return '🎉';
@@ -51,7 +51,6 @@ const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, mes
   return (
     <div className="envelope-wrapper" style={{ position: 'relative', width: '320px', height: '400px', margin: '0 auto', perspective: '1000px' }}>
       
-      {/* Particles Layer */}
       {isOpen && particles.map(p => (
         <div key={p.id} className="particle" style={{
           position: 'absolute',
@@ -59,7 +58,7 @@ const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, mes
           top: `50%`,
           fontSize: '2rem',
           transform: `translate(-50%, -50%) rotate(${p.r}deg)`,
-          animation: `explode 1.5s ease-out ${p.delay}s forwards`,
+          animation: `explode-${p.id} 1.5s ease-out ${p.delay}s forwards`,
           opacity: 0,
           zIndex: 50
         }}>
@@ -67,10 +66,8 @@ const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, mes
         </div>
       ))}
 
-      {/* Envelope Back */}
       <div style={{ position: 'absolute', bottom: 0, width: '100%', height: '200px', background: '#d1cdc7', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', zIndex: 1 }}></div>
       
-      {/* The Letter/Card */}
       <div 
         className={`card-content ${isOpen ? 'card-open' : ''}`}
         style={{
@@ -98,16 +95,13 @@ const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, mes
         </h2>
         <p style={{ fontSize: '1.1rem', whiteSpace: 'pre-wrap' }}>{message}</p>
         
-        {/* Watermark for free tier simulated here */}
         <div style={{ position: 'absolute', bottom: '10px', right: '10px', fontSize: '0.7rem', color: '#ccc' }}>
           Voices You Keep™
         </div>
       </div>
 
-      {/* Envelope Front Flaps */}
       <div style={{ position: 'absolute', bottom: 0, width: '100%', height: '200px', background: '#e8e5e1', clipPath: 'polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%)', borderBottomLeftRadius: '0.5rem', borderBottomRightRadius: '0.5rem', zIndex: 3 }}></div>
       
-      {/* Envelope Top Flap (Opens) */}
       <div 
         className={`flap ${isOpen ? 'flap-open' : ''}`}
         style={{
@@ -124,7 +118,6 @@ const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, mes
         }}
       ></div>
 
-      {/* Interaction Overlay */}
       {!isOpen && (
         <div 
           onClick={handleOpen}
@@ -135,10 +128,12 @@ const InteractiveEnvelope: React.FC<InteractiveEnvelopeProps> = ({ occasion, mes
       )}
       
       <style>{`
-        @keyframes explode {
-          0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
-          100% { transform: translate(calc(-50% + (random(200) - 100) * 1px), calc(-50% - 300px)) scale(1.5) rotate(360deg); opacity: 0; }
-        }
+        ${particles.map(p => `
+          @keyframes explode-${p.id} {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(calc(-50% + ${p.dx}px), calc(-50% + ${p.dy}px)) scale(1.5) rotate(360deg); opacity: 0; }
+          }
+        `).join('')}
         @keyframes pulse {
           0% { transform: scale(1); }
           50% { transform: scale(1.05); }
