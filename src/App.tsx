@@ -4,6 +4,7 @@ import { SubscriptionProvider } from './contexts/SubscriptionContext'
 import Landing from './pages/Landing'
 import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard'
+import CreateCard from './pages/CreateCard'
 import ViewCard from './pages/ViewCard'
 import StripeReturn from './pages/StripeReturn'
 import './App.css'
@@ -16,6 +17,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
+            {/* Public create route — no auth required to start */}
+            <Route path="/create" element={<CreateCard isPublic={true} />} />
             <Route path="/dashboard/*" element={<Dashboard />} />
             <Route path="/card/:cardId" element={<ViewCard />} />
             <Route path="/checkout/success" element={<StripeReturn status="success" />} />

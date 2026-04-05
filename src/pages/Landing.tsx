@@ -89,8 +89,8 @@ const Landing = () => {
             </div>
 
             <div className="hero-actions">
-              <Link to="/auth" className="btn btn-primary btn-large btn-mday">
-                🌸 Create Mom's Card — Free
+              <Link to="/create" className="btn btn-primary btn-large btn-mday">
+                🌸 Make Mom's Card Now — Free
               </Link>
               <a href="#how-it-works" className="btn btn-outline btn-large">See How It Works</a>
             </div>
