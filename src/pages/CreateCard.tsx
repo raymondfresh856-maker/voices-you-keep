@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import VoiceRecorder from '../components/VoiceRecorder';
 import InteractiveEnvelope from '../components/InteractiveEnvelope';
-import { Send, Eye, CalendarClock, ArrowLeft, ShieldAlert, X } from 'lucide-react';
+import { Send, Eye, CalendarClock, ArrowLeft, ShieldAlert, X, Copy, Check, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import { dbService, storageService, authService } from '../services/backend';
@@ -191,12 +191,30 @@ const CreateCard: React.FC<CreateCardProps> = ({ isPublic = false }) => {
   const [deliveryMethod, setDeliveryMethod] = useState('manual');
   const [previewMode, setPreviewMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const [savedCardId, setSavedCardId] = useState<string | null>(null);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [pendingSave, setPendingSave] = useState(false);
 
   const { user } = useAuth();
   const { isFreeTier } = useSubscription();
   const navigate = useNavigate();
+
+  const shareUrl = savedCardId ? `${window.location.origin}/card/${savedCardId}` : '';
+
+  const copyShareLink = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch {
+      // Fallback: select a text input
+      const input = document.getElementById('share-link-input') as HTMLInputElement | null;
+      if (input) { input.select(); document.execCommand('copy'); }
+    }
+  };
 
   const handleRecordingComplete = (blob: Blob) => {
     const url = URL.createObjectURL(blob);
@@ -206,6 +224,7 @@ const CreateCard: React.FC<CreateCardProps> = ({ isPublic = false }) => {
 
   const performSave = useCallback(async (currentUser: NonNullable<typeof user>) => {
     setIsSaving(true);
+    setSaveError('');
     try {
       let finalAudioUrl = '';
       if (audioBlob) {
@@ -231,7 +250,7 @@ const CreateCard: React.FC<CreateCardProps> = ({ isPublic = false }) => {
             body: JSON.stringify({
               recipientEmail,
               cardId: newCardId,
-              senderName: currentUser.displayName || 'Someone',
+              senderName: currentUser.displayName || currentUser.email?.split('@')[0] || 'Someone',
               occasion,
             }),
           });
@@ -240,14 +259,17 @@ const CreateCard: React.FC<CreateCardProps> = ({ isPublic = false }) => {
         }
       }
 
-      navigate('/dashboard');
+      // Show share link instead of immediately navigating away
+      setSavedCardId(newCardId);
+      setPreviewMode(false); // return to edit/share view
     } catch (e) {
       console.error(e);
-      alert('Failed to save card. Please try again.');
+      setSaveError('Failed to save your card. Please try again.');
     } finally {
       setIsSaving(false);
     }
-  }, [audioBlob, occasion, message, deliveryMethod, recipientEmail, navigate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioBlob, occasion, message, deliveryMethod, recipientEmail]);
 
   // After signing in via the modal, auto-complete the pending save
   useEffect(() => {
@@ -364,6 +386,75 @@ const CreateCard: React.FC<CreateCardProps> = ({ isPublic = false }) => {
       )}
 
       <div style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+
+        {/* ── Success / share banner ── */}
+        {savedCardId && (
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(64,224,208,0.12), rgba(138,43,226,0.12))',
+            border: '1px solid rgba(64,224,208,0.35)',
+            borderRadius: '1rem',
+            padding: '1.5rem 1.75rem',
+            marginBottom: '1.75rem',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>🎉</span>
+              <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Card saved! Share it now.</h3>
+            </div>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginBottom: '1rem' }}>
+              Copy the link below and send it to {recipientEmail || 'whoever you want'}. They'll see the envelope and hear your voice.
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                id="share-link-input"
+                readOnly
+                value={shareUrl}
+                style={{
+                  flex: 1,
+                  minWidth: '200px',
+                  padding: '0.6rem 0.875rem',
+                  borderRadius: '0.5rem',
+                  border: '1px solid rgba(64,224,208,0.3)',
+                  background: 'rgba(255,255,255,0.05)',
+                  color: 'var(--color-text)',
+                  fontSize: '0.85rem',
+                  fontFamily: 'monospace',
+                }}
+                onFocus={e => e.target.select()}
+              />
+              <button
+                onClick={copyShareLink}
+                className="btn btn-primary"
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.6rem 1.1rem' }}
+              >
+                {copiedLink ? <><Check size={15} /> Copied!</> : <><Copy size={15} /> Copy Link</>}
+              </button>
+            </div>
+            <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="btn btn-outline"
+                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem' }}
+              >
+                View Dashboard <ArrowRight size={14} />
+              </button>
+              <button
+                onClick={() => { setSavedCardId(null); setAudioBlob(null); setAudioUrl(undefined); setMessage("Happy Mother's Day! I love you so much. 💕"); setRecipientEmail(''); }}
+                className="btn btn-outline"
+                style={{ fontSize: '0.875rem' }}
+              >
+                + Make Another Card
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Save error */}
+        {saveError && (
+          <div style={{ background: 'rgba(255,107,107,0.1)', border: '1px solid rgba(255,107,107,0.3)', borderRadius: '0.5rem', padding: '0.75rem 1rem', marginBottom: '1.25rem', color: '#ff6b6b', fontSize: '0.875rem' }}>
+            ⚠️ {saveError}
+          </div>
+        )}
+
         {/* Guest banner */}
         {!user && (
           <div style={{

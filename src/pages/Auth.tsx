@@ -11,6 +11,16 @@ const Auth = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
+  const sendWelcomeEmail = async (userEmail: string, userName: string) => {
+    try {
+      await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'welcome', userEmail, userName })
+      });
+    } catch { /* non-blocking */ }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -18,18 +28,23 @@ const Auth = () => {
         await authService.login(email, password);
       } else {
         await authService.register(email, password, name);
+        // Fire welcome email — non-blocking
+        sendWelcomeEmail(email, name);
       }
       navigate('/dashboard');
     } catch (error) {
       console.error(error);
-      alert("Failed to authenticate. Please check credentials.");
+      alert("Failed to authenticate. Please check your credentials and try again.");
     }
   };
 
   const handleSSO = async (provider: string) => {
     try {
       if (provider === 'Google') {
-        await authService.loginGoogle();
+        const result = await authService.loginGoogle();
+        // Send welcome email for new Google sign-ups (best-effort)
+        const u = (result as any)?.user; // eslint-disable-line @typescript-eslint/no-explicit-any
+        if (u?.email) sendWelcomeEmail(u.email, u.displayName || u.email.split('@')[0]);
       } else {
         alert("Apple login is not configured yet.");
         return;
@@ -37,6 +52,7 @@ const Auth = () => {
       navigate('/dashboard');
     } catch (error) {
       console.error(error);
+      alert("Sign-in failed. Please try again.");
     }
   };
 

@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { v4 as uuidv4 } from 'uuid';
 
 export const firebaseConfig = {
@@ -52,7 +52,16 @@ export const authService = {
     if (IS_FIREBASE_ENABLED) {
       return signInWithEmailAndPassword(auth, email, pass);
     }
-    mockCurrentUser = { uid: 'mock_uid_1', email, displayName: email.split('@')[0] };
+    // Look up existing mock user or create new one with stable UID per email
+    const mdb = getMockDB();
+    let existingUser = mdb.users?.find((u: {email: string}) => u.email === email);
+    if (!existingUser) {
+      existingUser = { uid: `mock_${uuidv4()}`, email, displayName: email.split('@')[0] };
+      mdb.users = mdb.users || [];
+      mdb.users.push(existingUser);
+      saveMockDB(mdb);
+    }
+    mockCurrentUser = existingUser;
     localStorage.setItem(MOCK_AUTH_KEY, JSON.stringify(mockCurrentUser));
     return { user: mockCurrentUser };
   },
@@ -60,7 +69,12 @@ export const authService = {
     if (IS_FIREBASE_ENABLED) {
       return createUserWithEmailAndPassword(auth, email, pass);
     }
-    mockCurrentUser = { uid: 'mock_uid_1', email, displayName: name };
+    const uid = `mock_${uuidv4()}`;
+    mockCurrentUser = { uid, email, displayName: name };
+    const mdb = getMockDB();
+    mdb.users = mdb.users || [];
+    mdb.users.push(mockCurrentUser);
+    saveMockDB(mdb);
     localStorage.setItem(MOCK_AUTH_KEY, JSON.stringify(mockCurrentUser));
     return { user: mockCurrentUser };
   },
@@ -69,7 +83,12 @@ export const authService = {
       const provider = new GoogleAuthProvider();
       return signInWithPopup(auth, provider);
     }
-    mockCurrentUser = { uid: 'mock_uid_1', email: 'guest@mock.com', displayName: 'Guest User' };
+    const uid = `mock_${uuidv4()}`;
+    mockCurrentUser = { uid, email: 'guest@mock.com', displayName: 'Guest User' };
+    const mdb = getMockDB();
+    mdb.users = mdb.users || [];
+    mdb.users.push(mockCurrentUser);
+    saveMockDB(mdb);
     localStorage.setItem(MOCK_AUTH_KEY, JSON.stringify(mockCurrentUser));
     return { user: mockCurrentUser };
   },
@@ -120,10 +139,34 @@ export const dbService = {
     if (IS_FIREBASE_ENABLED) {
       const q = query(collection(db, 'cards'), where('userId', '==', userId));
       const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as CardData));
+      return querySnapshot.docs.map(d => ({ id: d.id, ...d.data() } as CardData));
     }
     const mdb = getMockDB();
-    return mdb.cards.filter((c: any) => c.userId === userId || c.userId === 'mock_uid_1'); // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return mdb.cards.filter((c: any) => c.userId === userId);
+  },
+  async getCard(cardId: string): Promise<CardData | null> {
+    if (IS_FIREBASE_ENABLED) {
+      try {
+        const docSnap = await getDoc(doc(db, 'cards', cardId));
+        if (docSnap.exists()) return { id: docSnap.id, ...docSnap.data() } as CardData;
+        return null;
+      } catch { return null; }
+    }
+    const mdb = getMockDB();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const found = mdb.cards.find((c: any) => c.id === cardId);
+    return found || null;
+  },
+  async deleteCard(cardId: string, userId: string) {
+    if (IS_FIREBASE_ENABLED) {
+      await deleteDoc(doc(db, 'cards', cardId));
+      return;
+    }
+    const mdb = getMockDB();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mdb.cards = mdb.cards.filter((c: any) => !(c.id === cardId && c.userId === userId));
+    saveMockDB(mdb);
   }
 };
 
@@ -135,13 +178,16 @@ export const storageService = {
       await uploadBytes(storageRef, blob);
       return await getDownloadURL(storageRef);
     }
-    // Mock local representation as object URL
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve(reader.result as string); // Save as base64 string in local setup
-      };
-      reader.readAsDataURL(blob);
-    });
+    // Mock: store as object URL (in-memory, persists during session)
+    return URL.createObjectURL(blob);
+  },
+  async deleteAudio(path: string): Promise<void> {
+    if (IS_FIREBASE_ENABLED) {
+      try {
+        const storageRef = ref(storage, path);
+        await deleteObject(storageRef);
+      } catch { /* ignore if file not found */ }
+    }
+    // Mock: nothing to clean up for object URLs
   }
 };
