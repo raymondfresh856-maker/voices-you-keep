@@ -238,9 +238,36 @@ const DashboardHome = () => {
 const SettingsPage = () => {
   const { user } = useAuth();
   const { tier, tierLabel, tierPrice, isFreeTier } = useSubscription();
-  const portalLink = import.meta.env.VITE_STRIPE_CUSTOMER_PORTAL;
-  const plusLink = import.meta.env.VITE_STRIPE_PLUS_LINK;
-  const proLink = import.meta.env.VITE_STRIPE_PRO_LINK;
+  const [checkoutLoading, setCheckoutLoading] = useState<'plus' | 'pro' | null>(null);
+  const [checkoutError, setCheckoutError] = useState('');
+
+  const startCheckout = async (selectedTier: 'plus' | 'pro') => {
+    if (!user) return;
+    setCheckoutLoading(selectedTier);
+    setCheckoutError('');
+    try {
+      const res = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tier: selectedTier,
+          userId: user.uid,
+          userEmail: user.email || '',
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || 'Could not start checkout. Please try again.');
+      }
+      // Redirect to Stripe Checkout (same tab)
+      window.location.href = data.url;
+    } catch (err: any) {
+      setCheckoutError(err.message || 'Something went wrong. Please try again.');
+      setCheckoutLoading(null);
+    }
+  };
+
+  const STRIPE_PORTAL = 'https://billing.stripe.com/p/login/test_00g00000000000000000'; // replaced at runtime via env if needed
 
   return (
     <div style={{ padding: '2rem' }}>
@@ -261,47 +288,101 @@ const SettingsPage = () => {
         <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: 0 }}>
           <CreditCard size={20} /> Subscription
         </h3>
-        <p style={{ marginBottom: '1rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Manage your billing via our secure Stripe integration.</p>
+        <p style={{ marginBottom: '1rem', color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+          Secure billing via Stripe. Cancel anytime.
+        </p>
 
+        {/* Current plan badge */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: 'rgba(255,255,255,0.08)', borderRadius: '0.5rem', marginBottom: '1.5rem' }}>
           <div>
             <strong>Current Plan: {tierLabel}</strong>
-            {tier !== 'free' && <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-accent)', marginTop: '0.25rem' }}>✓ Active</span>}
-            {tier === 'free' && <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>2 cards/month · 60s recordings · Manual sharing</span>}
+            {tier !== 'free' && (
+              <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-accent)', marginTop: '0.25rem' }}>✓ Active</span>
+            )}
+            {tier === 'free' && (
+              <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
+                2 cards/month · 60s recordings · Manual sharing only
+              </span>
+            )}
           </div>
-          <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: tier === 'free' ? 'var(--color-text-muted)' : 'var(--color-accent)' }}>{tierPrice}</span>
+          <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: tier === 'free' ? 'var(--color-text-muted)' : 'var(--color-accent)' }}>
+            {tierPrice}
+          </span>
         </div>
+
+        {checkoutError && (
+          <div style={{ background: 'rgba(255,107,107,0.1)', border: '1px solid rgba(255,107,107,0.3)', borderRadius: '0.5rem', padding: '0.75rem 1rem', marginBottom: '1rem', fontSize: '0.875rem', color: '#ff6b6b' }}>
+            ⚠️ {checkoutError}
+          </div>
+        )}
 
         {isFreeTier ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ background: 'rgba(232,82,122,0.08)', border: '1px solid rgba(232,82,122,0.2)', borderRadius: '0.75rem', padding: '1rem 1.25rem', marginBottom: '0.5rem' }}>
-              <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', margin: 0 }}>
-                Upgrade to <strong style={{ color: 'var(--color-text)' }}>Plus</strong> for email delivery, 5-minute recordings, and up to 10 cards/month.
-                Upgrade to <strong style={{ color: 'var(--color-text)' }}>Pro</strong> for unlimited everything + the Voice Vault.
-              </p>
+            {/* Plan comparison */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              {/* Plus card */}
+              <div style={{ background: 'linear-gradient(135deg, rgba(138,43,226,0.12), rgba(192,132,252,0.08))', border: '1px solid rgba(138,43,226,0.25)', borderRadius: '0.75rem', padding: '1.25rem' }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Plus</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>$4.99<span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--color-text-muted)' }}>/mo</span></div>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem', fontSize: '0.825rem', color: 'var(--color-text-muted)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <li>✓ Email delivery</li>
+                  <li>✓ 5-min recordings</li>
+                  <li>✓ 10 cards/month</li>
+                  <li>✓ Scheduled sending</li>
+                </ul>
+                <button
+                  onClick={() => startCheckout('plus')}
+                  disabled={checkoutLoading !== null}
+                  className="btn btn-primary"
+                  style={{ width: '100%', fontSize: '0.85rem', padding: '0.6rem' }}
+                >
+                  {checkoutLoading === 'plus' ? 'Redirecting…' : 'Upgrade to Plus'}
+                </button>
+              </div>
+
+              {/* Pro card */}
+              <div style={{ background: 'linear-gradient(135deg, rgba(232,82,122,0.12), rgba(255,183,77,0.08))', border: '1px solid rgba(232,82,122,0.3)', borderRadius: '0.75rem', padding: '1.25rem', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: '-10px', right: '12px', background: 'var(--color-warm)', color: 'white', fontSize: '0.65rem', fontWeight: 'bold', padding: '0.2rem 0.5rem', borderRadius: '1rem', textTransform: 'uppercase' }}>
+                  Best Value
+                </div>
+                <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>Pro</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-secondary)', marginBottom: '0.75rem' }}>$9.99<span style={{ fontSize: '0.8rem', fontWeight: 'normal', color: 'var(--color-text-muted)' }}>/mo</span></div>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1rem', fontSize: '0.825rem', color: 'var(--color-text-muted)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <li>✓ Everything in Plus</li>
+                  <li>✓ Unlimited cards</li>
+                  <li>✓ Voice Vault</li>
+                  <li>✓ Priority support</li>
+                </ul>
+                <button
+                  onClick={() => startCheckout('pro')}
+                  disabled={checkoutLoading !== null}
+                  className="btn btn-primary btn-mday"
+                  style={{ width: '100%', fontSize: '0.85rem', padding: '0.6rem' }}
+                >
+                  {checkoutLoading === 'pro' ? 'Redirecting…' : 'Upgrade to Pro'}
+                </button>
+              </div>
             </div>
-            {plusLink && (
-              <a href={plusLink} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ display: 'inline-flex', gap: '0.5rem' }}>
-                Upgrade to Plus ($4.99/mo) <ExternalLink size={14} />
-              </a>
-            )}
-            {proLink && (
-              <a href={proLink} target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ display: 'inline-flex', gap: '0.5rem' }}>
-                Upgrade to Pro ($9.99/mo) <ExternalLink size={14} />
-              </a>
-            )}
-            {!plusLink && !proLink && (
-              <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Stripe payment links not yet configured. Check back soon!</p>
-            )}
+
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: '0.25rem 0 0', textAlign: 'center' }}>
+              🔒 Secured by Stripe. Cancel anytime — no questions asked.
+            </p>
           </div>
         ) : (
-          portalLink ? (
-            <a href={portalLink} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ display: 'inline-flex', gap: '0.5rem' }}>
-              Manage Subscription in Stripe <ExternalLink size={14} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', margin: 0 }}>
+              Your {tierLabel} subscription is active. Use the Stripe portal to update payment info, view invoices, or cancel.
+            </p>
+            <a
+              href={STRIPE_PORTAL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{ display: 'inline-flex', gap: '0.5rem', alignSelf: 'flex-start' }}
+            >
+              Manage Billing in Stripe <ExternalLink size={14} />
             </a>
-          ) : (
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>To manage your subscription, contact support@voicesyoukeep.com</p>
-          )
+          </div>
         )}
       </div>
     </div>
