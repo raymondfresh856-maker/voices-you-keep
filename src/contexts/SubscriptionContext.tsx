@@ -1,14 +1,14 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 
-export type SubscriptionTier = 'free' | 'plus' | 'pro';
+export type SubscriptionTier = 'free' | 'pro' | 'pro_plus';
 
 interface SubscriptionContextType {
   tier: SubscriptionTier;
   setTier: (tier: SubscriptionTier) => void;
   isFreeTier: boolean;
-  isPlusTier: boolean;
   isProTier: boolean;
+  isProPlusTier: boolean;
   tierLabel: string;
   tierPrice: string;
 }
@@ -19,8 +19,8 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
   tier: 'free',
   setTier: () => {},
   isFreeTier: true,
-  isPlusTier: false,
   isProTier: false,
+  isProPlusTier: false,
   tierLabel: 'Free',
   tierPrice: '$0',
 });
@@ -32,7 +32,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (user) {
       const saved = localStorage.getItem(`${STORAGE_KEY}_${user.uid}`);
-      if (saved === 'plus' || saved === 'pro') {
+      if (saved === 'pro' || saved === 'pro_plus') {
         setTierState(saved);
       } else {
         setTierState('free');
@@ -45,7 +45,7 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tierParam = params.get('tier');
-    if (tierParam === 'plus' || tierParam === 'pro') {
+    if (tierParam === 'pro' || tierParam === 'pro_plus') {
       setTier(tierParam);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -58,16 +58,16 @@ export const SubscriptionProvider = ({ children }: { children: React.ReactNode }
     }
   };
 
-  const tierLabel = tier === 'pro' ? 'Pro' : tier === 'plus' ? 'Plus' : 'Free';
-  const tierPrice = tier === 'pro' ? '$9.99/mo' : tier === 'plus' ? '$4.99/mo' : '$0';
+  const tierLabel = tier === 'pro_plus' ? 'Pro Plus' : tier === 'pro' ? 'Pro' : 'Free';
+  const tierPrice = tier === 'pro_plus' ? '$27.99 (Lifetime)' : tier === 'pro' ? '$14.99/mo' : '$0';
 
   return (
     <SubscriptionContext.Provider value={{
       tier,
       setTier,
       isFreeTier: tier === 'free',
-      isPlusTier: tier === 'plus',
       isProTier: tier === 'pro',
+      isProPlusTier: tier === 'pro_plus',
       tierLabel,
       tierPrice,
     }}>
